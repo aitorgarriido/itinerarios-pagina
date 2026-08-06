@@ -375,9 +375,10 @@ app.get('/api/itinerario/:destino', async (req, res) => {
         descripcion: act.descripcion,
         direccion: `${destinoFormateado}, Centro`,
         valoracion: (4.6 + (Math.random() * 0.3)).toFixed(1),
-        link_afiliado: (act.tipo === 'tour' || act.tipo === 'atraccion') 
-          ? `https://www.civitatis.com/es/buscar/?q=${queryBusqueda}&a=${AFFILIATE_CONFIG.civitatis_id}` 
-          : null,
+        // FORMATO CORRECTO CON /buscar/
+link_afiliado: (act.tipo === 'tour' || act.tipo === 'atraccion')
+  ? `https://www.civitatis.com/es/buscar/?q=${encodeURIComponent((act.busqueda || act.nombre) + ' ' + destinoFormateado)}&a=${AFFILIATE_CONFIG.civitatis_id}`
+  : null,
         texto_boton: act.tipo === 'tour' ? '🎟️ Ver visitas guiadas' : '🎟️ Reservar entradas'
       };
     });
@@ -465,9 +466,10 @@ app.post('/api/personalizar', async (req, res) => {
           descripcion: act.descripcion,
           direccion: `${destino}, Centro`,
           valoracion: (4.6 + (Math.random() * 0.3)).toFixed(1),
-          link_afiliado: (act.tipo === 'tour' || act.tipo === 'atraccion')
-            ? `[https://www.civitatis.com/es/buscar/?q=$](https://www.civitatis.com/es/buscar/?q=$){queryBusqueda}&a=${AFFILIATE_CONFIG.civitatis_id}`
-            : null,
+          // FORMATO CORRECTO CON /buscar/
+link_afiliado: (act.tipo === 'tour' || act.tipo === 'atraccion')
+  ? `https://www.civitatis.com/es/buscar/?q=${encodeURIComponent((act.busqueda || act.nombre) + ' ' + destinoFormateado)}&a=${AFFILIATE_CONFIG.civitatis_id}`
+  : null,
           texto_boton: act.tipo === 'tour' ? '🎟️ Ver visitas guiadas' : '🎟️ Reservar entradas'
         };
       }),
