@@ -62,10 +62,28 @@
       </form>
     </div>
 
+    <!-- Panel de Personalización con IA (Oculto hasta cargar un itinerario) -->
+    <div id="panel-ia" class="hidden mb-10 bg-slate-900/80 border border-sky-500/30 rounded-2xl p-6 shadow-xl backdrop-blur">
+      <div class="flex items-center gap-2 mb-2">
+        <span class="text-xl">✨</span>
+        <h3 class="text-lg font-bold text-white">Personalizar esta ruta con IA</h3>
+      </div>
+      <p class="text-slate-400 text-sm mb-4">
+        Adapta el plan a tus preferencias (ej: "Reducir a 2 días", "Añadir más museos de arte", "Viajar con niños", etc.).
+      </p>
+      
+      <form id="ia-form" class="flex flex-col sm:flex-row gap-3">
+        <input type="text" id="input-peticion-ia" placeholder="Ej: Cambiar a 3 días y priorizar gastronomía..." class="flex-grow px-4 py-3 rounded-xl bg-slate-950 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 text-sm">
+        <button type="submit" id="btn-ia" class="px-6 py-3 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-bold rounded-xl transition shadow-lg shadow-sky-500/20 text-sm whitespace-nowrap">
+          Reorganizar con IA
+        </button>
+      </form>
+    </div>
+
     <!-- Indicador de Carga -->
     <div id="loading" class="hidden text-center py-12">
       <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-sky-500 border-t-transparent"></div>
-      <p class="mt-4 text-slate-400">Cargando itinerario optimizado...</p>
+      <p id="loading-text" class="mt-4 text-slate-400">Cargando itinerario optimizado...</p>
     </div>
 
     <!-- Contenedor del Itinerario -->
@@ -73,6 +91,10 @@
   </main>
 
   <script>
+    // Variables globales para recordar el itinerario actual y el destino activo
+    let itinerarioActualData = null;
+    let destinoActualNombre = '';
+
     document.addEventListener('DOMContentLoaded', async () => {
       const selectDestino = document.getElementById('select-destino');
 
@@ -95,22 +117,81 @@
       if (!destino) return;
 
       const loading = document.getElementById('loading');
+      const loadingText = document.getElementById('loading-text');
       const container = document.getElementById('itinerary-container');
       const printBtn = document.getElementById('btn-print');
+      const panelIA = document.getElementById('panel-ia');
 
+      loadingText.innerText = 'Cargando itinerario optimizado...';
       loading.classList.remove('hidden');
+      panelIA.classList.add('hidden');
       container.innerHTML = '';
 
       try {
         const res = await fetch(`/api/itinerario/${destino}`);
         const data = await res.json();
         
+        // Guardar referencia en variables globales
+        itinerarioActualData = data.itinerario;
+        destinoActualNombre = data.destino;
+
         loading.classList.add('hidden');
         printBtn.classList.remove('hidden');
+        panelIA.classList.remove('hidden');
         renderItinerario(data);
       } catch (err) {
         loading.classList.add('hidden');
         container.innerHTML = `<p class="text-center text-red-400">Error al obtener la ruta. Inténtalo de nuevo.</p>`;
+      }
+    });
+
+    // Evento para procesar el envío de personalización con IA
+    document.getElementById('ia-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const peticionInput = document.getElementById('input-peticion-ia');
+      const peticion = peticionInput.value.trim();
+
+      if (!peticion) return alert("Escribe los cambios que deseas realizar en el itinerario.");
+      if (!itinerarioActualData || !destinoActualNombre) return alert("Selecciona un destino primero.");
+
+      const loading = document.getElementById('loading');
+      const loadingText = document.getElementById('loading-text');
+      const container = document.getElementById('itinerary-container');
+      const btnIA = document.getElementById('btn-ia');
+
+      btnIA.disabled = true;
+      peticionInput.disabled = true;
+      loadingText.innerText = '✨ La Inteligencia Artificial está reorganizando tu ruta...';
+      loading.classList.remove('hidden');
+      container.innerHTML = '';
+
+      try {
+        const res = await fetch('/api/personalizar', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            destino: destinoActualNombre,
+            itinerarioActual: itinerarioActualData,
+            peticion: peticion
+          })
+        });
+
+        const data = await res.json();
+
+        if (data.itinerario) {
+          itinerarioActualData = data.itinerario;
+          renderItinerario(data);
+          peticionInput.value = '';
+        } else {
+          alert("No se pudo personalizar el itinerario.");
+        }
+      } catch (err) {
+        console.error("Error al conectar con la IA:", err);
+        alert("Ocurrió un error al procesar tu solicitud con IA.");
+      } finally {
+        loading.classList.add('hidden');
+        btnIA.disabled = false;
+        peticionInput.disabled = false;
       }
     });
 
@@ -186,9 +267,6 @@
 
       container.innerHTML = html;
     }
-  </script>
-</body>
-</html>
   </script>
 </body>
 </html>

@@ -1,9 +1,13 @@
 const express = require('express');
 const axios = require('axios');
+const { GoogleGenAI } = require('@google/genai');
 require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Inicialización de la IA con Google GenAI SDK
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 app.use(express.json());
 app.use(express.static('public'));
@@ -390,6 +394,86 @@ app.get('/api/itinerario/:destino', async (req, res) => {
     duracion_dias: itinerarioGenerado.length,
     itinerario: itinerarioGenerado
   });
+});
+
+// Ruta nueva para personalizar itinerarios usando IA (Gemini)
+app.post('/api/personalizar', async (req, res) => {
+  const { destino, itinerarioActual, peticion } = req.body;
+
+  if (!peticion) {
+    return res.status(400).json({ error: "Por favor, indica qué cambios deseas realizar." });
+  }
+
+  const bookingLink = `https://www.booking.com/searchresults.es.html?ss=${encodeURIComponent(destino)}&aid=${AFFILIATE_CONFIG.booking_aid}`;
+
+  const prompt = `
+    Eres un guía de viajes experto. Adapta el siguiente itinerario base para la ciudad de ${destino}:
+    ${JSON.stringify(itinerarioActual)}
+
+    Petición o cambios indicados por el usuario: "${peticion}".
+
+    Devuelve ÚNICAMENTE un objeto JSON válido con la propiedad "itinerario". Mantén este formato exacto:
+    {
+      "itinerario": [
+        {
+          "dia": 1,
+          "titulo": "Título breve descriptivo del día",
+          "actividades": [
+            {
+              "hora": "09:00",
+              "nombre": "Nombre de la atracción o lugar",
+              "descripcion": "Descripción concisa y útil",
+              "tipo": "tour" // o "atraccion" o "resto"
+            }
+          ]
+        }
+      ]
+    }
+  `;
+
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: prompt,
+      config: {
+        responseMimeType: "application/json"
+      }
+    });
+
+    const datosIA = JSON.parse(response.text);
+
+    // Formatear los datos devueltos por la IA para integrar tus enlaces de afiliados
+    const itinerarioFormateado = datosIA.itinerario.map((dia, index) => ({
+      dia: index + 1,
+      titulo: dia.titulo,
+      actividades: dia.actividades.map(act => ({
+        hora: act.hora || "10:00",
+        nombre: act.nombre,
+        descripcion: act.descripcion,
+        direccion: `${destino}, Centro`,
+        valoracion: (4.6 + (Math.random() * 0.3)).toFixed(1),
+        link_afiliado: (act.tipo === 'tour' || act.tipo === 'atraccion')
+          ? `https://www.civitatis.com/es/buscar/?q=${encodeURIComponent(act.nombre)}&a=${AFFILIATE_CONFIG.civitatis_id}`
+          : null,
+        texto_boton: act.tipo === 'tour' ? '🎟️ Ver visitas guiadas' : '🎟️ Reservar entradas'
+      })),
+      hotel_recomendado: {
+        nombre: `Alojamiento recomendado en ${destino}`,
+        descripcion: "Hoteles céntricos con buenas opiniones y cancelación flexible.",
+        booking_link: bookingLink,
+        texto_boton: "🏨 Ver disponibilidad en Booking"
+      }
+    }));
+
+    res.json({
+      destino,
+      duracion_dias: itinerarioFormateado.length,
+      itinerario: itinerarioFormateado
+    });
+  } catch (error) {
+    console.error("Error al generar con IA:", error);
+    res.status(500).json({ error: "Ocurrió un error al procesar el itinerario con IA." });
+  }
 });
 
 app.listen(PORT, () => {
