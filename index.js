@@ -372,7 +372,7 @@ app.get('/api/itinerario/:destino', async (req, res) => {
       direccion: `${destinoFormateado}, Centro`,
       valoracion: (4.6 + (Math.random() * 0.3)).toFixed(1),
       link_afiliado: (act.tipo === 'tour' || act.tipo === 'atraccion') 
-        ? `https://www.civitatis.com/es/buscar/?q=${encodeURIComponent(act.busqueda || act.nombre)}&a=${AFFILIATE_CONFIG.civitatis_id}` 
+        ? `https://www.civitatis.com/es/buscar/?q=${encodeURIComponent(act.busqueda || (act.nombre + ' ' + destinoFormateado))}&a=${AFFILIATE_CONFIG.civitatis_id}` 
         : null,
       texto_boton: act.tipo === 'tour' ? '🎟️ Ver visitas guiadas' : '🎟️ Reservar entradas'
     }));
@@ -440,6 +440,50 @@ app.post('/api/personalizar', async (req, res) => {
         responseMimeType: "application/json"
       }
     });
+
+    let textoLimpio = response.text.trim();
+    if (textoLimpio.startsWith('```')) {
+      textoLimpio = textoLimpio.replace(/^```(json)?\n?/, '').replace(/\n?```$/, '');
+    }
+
+    const datosIA = JSON.parse(textoLimpio);
+
+    const itinerarioFormateado = datosIA.itinerario.map((dia, index) => ({
+      dia: index + 1,
+      titulo: dia.titulo,
+      actividades: dia.actividades.map(act => ({
+        hora: act.hora || "10:00",
+        nombre: act.nombre,
+        descripcion: act.descripcion,
+        direccion: `${destino}, Centro`,
+        valoracion: (4.6 + (Math.random() * 0.3)).toFixed(1),
+        link_afiliado: (act.tipo === 'tour' || act.tipo === 'atraccion')
+          ? `[https://www.civitatis.com/es/buscar/?q=$](https://www.civitatis.com/es/buscar/?q=$){encodeURIComponent(act.nombre + ' ' + destino)}&a=${AFFILIATE_CONFIG.civitatis_id}`
+          : null,
+        texto_boton: act.tipo === 'tour' ? '🎟️ Ver visitas guiadas' : '🎟️ Reservar entradas'
+      })),
+      hotel_recomendado: {
+        nombre: `Alojamiento recomendado en ${destino}`,
+        descripcion: "Hoteles céntricos con buenas opiniones y cancelación flexible.",
+        booking_link: bookingLink,
+        texto_boton: "🏨 Ver disponibilidad en Booking"
+      }
+    }));
+
+    res.json({
+      destino,
+      duracion_dias: itinerarioFormateado.length,
+      itinerario: itinerarioFormateado
+    });
+  } catch (error) {
+    console.error("Error detallado en la IA:", error.message || error);
+    res.status(500).json({ error: "Ocurrió un error al procesar el itinerario con IA." });
+  }
+});
+
+app.listen(PORT, () => {
+  console.log(`Servidor de viajes ejecutándose en http://localhost:${PORT}`);
+});
 
     let textoLimpio = response.text.trim();
     if (textoLimpio.startsWith('```')) {
