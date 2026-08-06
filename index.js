@@ -397,7 +397,7 @@ app.get('/api/itinerario/:destino', async (req, res) => {
   });
 });
 
-// Endpoint de personalización con IA utilizando gemini-1.5-flash
+// Endpoint de personalización con IA utilizando gemini-2.5-flash
 app.post('/api/personalizar', async (req, res) => {
   const { destino, itinerarioActual, peticion } = req.body;
 
@@ -434,7 +434,7 @@ app.post('/api/personalizar', async (req, res) => {
 
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-1.5-flash',
+      model: 'gemini-2.5-flash',
       contents: prompt,
       config: {
         responseMimeType: "application/json"
@@ -471,7 +471,7 @@ app.post('/api/personalizar', async (req, res) => {
       itinerario: itinerarioFormateado
     });
   } catch (error) {
-    console.error("Error detallado en la IA:", error);
+    console.error("Error detallado en la IA:", error.message || error);
     res.status(500).json({ error: "Ocurrió un error al procesar el itinerario con IA." });
   }
 });
