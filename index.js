@@ -365,17 +365,22 @@ app.get('/api/itinerario/:destino', async (req, res) => {
 
   const plantillasDias = ITINERARIOS_BASE[destinoNormalizado];
   const itinerarioGenerado = plantillasDias.map((plantilla, index) => {
-    const actividadesFormateadas = plantilla.actividades.map(act => ({
-      hora: act.hora,
-      nombre: act.nombre,
-      descripcion: act.descripcion,
-      direccion: `${destinoFormateado}, Centro`,
-      valoracion: (4.6 + (Math.random() * 0.3)).toFixed(1),
-      link_afiliado: (act.tipo === 'tour' || act.tipo === 'atraccion') 
-        ? `https://www.civitatis.com/es/buscar/?q=${encodeURIComponent(act.busqueda || (act.nombre + ' ' + destinoFormateado))}&a=${AFFILIATE_CONFIG.civitatis_id}` 
-        : null,
-      texto_boton: act.tipo === 'tour' ? '🎟️ Ver visitas guiadas' : '🎟️ Reservar entradas'
-    }));
+    const actividadesFormateadas = plantilla.actividades.map(act => {
+      // Construir la consulta limpia para la URL de Civitatis
+      const queryBusqueda = encodeURIComponent((act.busqueda || act.nombre) + ' ' + destinoFormateado);
+      
+      return {
+        hora: act.hora,
+        nombre: act.nombre,
+        descripcion: act.descripcion,
+        direccion: `${destinoFormateado}, Centro`,
+        valoracion: (4.6 + (Math.random() * 0.3)).toFixed(1),
+        link_afiliado: (act.tipo === 'tour' || act.tipo === 'atraccion') 
+          ? `https://www.civitatis.com/es/buscar/?q=${queryBusqueda}&a=${AFFILIATE_CONFIG.civitatis_id}` 
+          : null,
+        texto_boton: act.tipo === 'tour' ? '🎟️ Ver visitas guiadas' : '🎟️ Reservar entradas'
+      };
+    });
 
     return {
       dia: index + 1,
@@ -451,17 +456,21 @@ app.post('/api/personalizar', async (req, res) => {
     const itinerarioFormateado = datosIA.itinerario.map((dia, index) => ({
       dia: index + 1,
       titulo: dia.titulo,
-      actividades: dia.actividades.map(act => ({
-        hora: act.hora || "10:00",
-        nombre: act.nombre,
-        descripcion: act.descripcion,
-        direccion: `${destino}, Centro`,
-        valoracion: (4.6 + (Math.random() * 0.3)).toFixed(1),
-        link_afiliado: (act.tipo === 'tour' || act.tipo === 'atraccion')
-          ? `[https://www.civitatis.com/es/buscar/?q=$](https://www.civitatis.com/es/buscar/?q=$){encodeURIComponent(act.nombre + ' ' + destino)}&a=${AFFILIATE_CONFIG.civitatis_id}`
-          : null,
-        texto_boton: act.tipo === 'tour' ? '🎟️ Ver visitas guiadas' : '🎟️ Reservar entradas'
-      })),
+      actividades: dia.actividades.map(act => {
+        const queryBusqueda = encodeURIComponent(act.nombre + ' ' + destino);
+        
+        return {
+          hora: act.hora || "10:00",
+          nombre: act.nombre,
+          descripcion: act.descripcion,
+          direccion: `${destino}, Centro`,
+          valoracion: (4.6 + (Math.random() * 0.3)).toFixed(1),
+          link_afiliado: (act.tipo === 'tour' || act.tipo === 'atraccion')
+            ? `[https://www.civitatis.com/es/buscar/?q=$](https://www.civitatis.com/es/buscar/?q=$){queryBusqueda}&a=${AFFILIATE_CONFIG.civitatis_id}`
+            : null,
+          texto_boton: act.tipo === 'tour' ? '🎟️ Ver visitas guiadas' : '🎟️ Reservar entradas'
+        };
+      }),
       hotel_recomendado: {
         nombre: `Alojamiento recomendado en ${destino}`,
         descripcion: "Hoteles céntricos con buenas opiniones y cancelación flexible.",
