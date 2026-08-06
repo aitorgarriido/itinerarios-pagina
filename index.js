@@ -187,6 +187,151 @@ const ITINERARIOS_BASE = {
         { hora: "14:00", nombre: "Almuerzo en Mercato Centrale Roma", descripcion: "Mercado gastronómico con múltiples puestos de especialidades italianas e internacionales.", tipo: "resto" }
       ]
     }
+  ],
+  granada: [
+    {
+      titulo: "Casco histórico y atardecer en el Albaicín",
+      actividades: [
+        { hora: "12:00", nombre: "Llegada a Granada", descripcion: "Llegada al alojamiento y check-in (o dejar el equipaje).", tipo: "atraccion", busqueda: "Granada Centro" },
+        { hora: "12:45", nombre: "Plaza Nueva", descripcion: "Empieza a conocer el casco histórico de la ciudad.", tipo: "atraccion", busqueda: "Plaza Nueva Granada" },
+        { hora: "13:10", nombre: "Carrera del Darro", descripcion: "Recorre una de las calles más bonitas de España.", tipo: "atraccion", busqueda: "Carrera del Darro Granada" },
+        { hora: "14:00", nombre: "Comida de tapas", descripcion: "Disfruta del almuerzo en los bares tradicionales del centro histórico.", tipo: "resto" },
+        { hora: "15:30", nombre: "Paseo de los Tristes", descripcion: "Disfruta de las vistas de la Alhambra desde abajo.", tipo: "atraccion", busqueda: "Paseo de los Tristes Granada" },
+        { hora: "16:00", nombre: "Barrio del Albaicín", descripcion: "Recorre tranquilamente: Calle Calderería Nueva, Placeta de Carvajales, Plaza Larga y sus calles medievales.", tipo: "tour", busqueda: "Free tour Albaicin Granada" },
+        { hora: "18:00", nombre: "Mirador de San Nicolás", descripcion: "Quédate hasta el atardecer contemplando la Alhambra.", tipo: "atraccion", busqueda: "Mirador de San Nicolas Granada" },
+        { hora: "19:30", nombre: "Bajada por el Albaicín iluminado", descripcion: "Paseo nocturno por sus callejuelas empedradas hasta el centro.", tipo: "atraccion", busqueda: "Albaicin Granada" }
+      ]
+    },
+    {
+      titulo: "La Alhambra y el Barrio del Realejo",
+      actividades: [
+        { hora: "09:00", nombre: "Entrada a la Alhambra", descripcion: "Recorrido completo: Alcazaba, Palacios Nazaríes, Palacio de Carlos V, Medina, Generalife y Jardines (5 horas aprox).", tipo: "tour", busqueda: "Entradas Alhambra de Granada" },
+        { hora: "14:00", nombre: "Comida", descripcion: "Pausa para almorzar y descansar tras la extensa visita a la Alhambra.", tipo: "resto" },
+        { hora: "15:30", nombre: "Bosque de la Alhambra", descripcion: "Paseo refrescante entre la vegetación descendiendo hacia el centro.", tipo: "atraccion", busqueda: "Bosque de la Alhambra Granada" },
+        { hora: "16:15", nombre: "Cuesta de Gomérez", descripcion: "Descenso hacia la Puerta de las Granadas observando las tiendas de artesanía y taracea.", tipo: "atraccion", busqueda: "Cuesta de Gomerez Granada" },
+        { hora: "17:00", nombre: "Barrio del Realejo", descripcion: "Explora el antiguo barrio judío: Campo del Príncipe, Iglesia de Santo Domingo y calles históricas.", tipo: "atraccion", busqueda: "Barrio Realejo Granada" },
+        { hora: "18:30", nombre: "Carmen de los Mártires", descripcion: "Uno de los jardines más bonitos de Granada.", tipo: "atraccion", busqueda: "Carmen de los Martires Granada" }
+      ]
+    },
+    {
+      titulo: "Catedral, monasterios y Sacromonte",
+      actividades: [
+        { hora: "10:00", nombre: "Catedral de Granada", descripcion: "Visita a la magistral obra cumbre del Renacimiento español.", tipo: "atraccion", busqueda: "Catedral de Granada" },
+        { hora: "11:00", nombre: "Capilla Real de Granada", descripcion: "Panteón donde descansan los restos de los Reyes Católicos.", tipo: "atraccion", busqueda: "Capilla Real Granada" },
+        { hora: "12:00", nombre: "Alcaicería", descripcion: "Antiguo zoco árabe con laberínticas callejuelas dedicadas al comercio artesanal.", tipo: "atraccion", busqueda: "Alcaiceria Granada" },
+        { hora: "12:45", nombre: "Plaza Bib-Rambla", descripcion: "Centro neurálgico con animadas terrazas donde tomar algo.", tipo: "atraccion", busqueda: "Plaza Bib Rambla Granada" },
+        { hora: "14:00", nombre: "Comida", descripcion: "Almuerzo en la zona centro.", tipo: "resto" },
+        { hora: "15:45", nombre: "Monasterio de San Jerónimo", descripcion: "Majestuoso monasterio y joya del renacimiento hispano.", tipo: "atraccion", busqueda: "Monasterio de San Jeronimo Granada" },
+        { hora: "17:00", nombre: "Barrio del Sacromonte", descripcion: "Paseo por el pintoresco barrio gitano con sus famosas casas-cueva.", tipo: "atraccion", busqueda: "Sacromonte Granada" },
+        { hora: "18:00", nombre: "Abadía del Sacromonte", descripcion: "Complejo religioso e histórico situado en lo alto del monte Valparaíso.", tipo: "atraccion", busqueda: "Abadia del Sacromonte Granada" },
+        { hora: "19:30", nombre: "Espectáculo flamenco en una cueva (opcional)", descripcion: "Disfruta de una zambra tradicional en el Sacromonte.", tipo: "tour", busqueda: "Espectaculo Flamenco Cueva Sacromonte Granada" }
+      ]
+    },
+    {
+      titulo: "Cartuja y despedida",
+      actividades: [
+        { hora: "09:30", nombre: "Basílica de San Juan de Dios", descripcion: "Una de las iglesias barrocas más impresionantes de España.", tipo: "atraccion", busqueda: "Basilica San Juan de Dios Granada" },
+        { hora: "10:30", nombre: "Monasterio de la Cartuja", descripcion: "Probablemente el interior barroco más espectacular de Granada.", tipo: "atraccion", busqueda: "Monasterio de la Cartuja Granada" },
+        { hora: "12:15", nombre: "Hospital Real", descripcion: "Sede histórica de la Universidad de Granada.", tipo: "atraccion", busqueda: "Hospital Real Granada" },
+        { hora: "13:00", nombre: "Último paseo por el centro", descripcion: "Recorre Calle Reyes Católicos, Plaza Isabel la Católica, tiendas de recuerdos o alguna tetería.", tipo: "atraccion", busqueda: "Plaza Isabel la Catolica Granada" },
+        { hora: "14:00", nombre: "Comida", descripcion: "Después de comer, regreso y salida de Granada.", tipo: "resto" }
+      ]
+    }
+  ],londres: [
+    {
+      titulo: "Llegada, Westminster y St. James's",
+      actividades: [
+        { hora: "12:00", nombre: "Llegada a Londres", descripcion: "Traslado al alojamiento y dejar el equipaje.", tipo: "atraccion", busqueda: "Londres Centro" },
+        { hora: "12:45", nombre: "Parlamento y Big Ben", descripcion: "Contempla uno de los edificios más famosos del mundo junto al Big Ben (Tiempo: 30 min).", tipo: "atraccion", busqueda: "Big Ben Londres" },
+        { hora: "13:20", nombre: "Plaza del Parlamento", descripcion: "Fotografías icónicas de la Abadía y del Palacio de Westminster.", tipo: "atraccion", busqueda: "Parliament Square Londres" },
+        { hora: "14:00", nombre: "Comida", descripcion: "Almuerzo en la zona de Westminster.", tipo: "resto" },
+        { hora: "15:30", nombre: "Abadía de Westminster", descripcion: "Lugar de coronación de los reyes británicos desde 1066 (Tiempo: 1 h 30 min).", tipo: "tour", busqueda: "Abadia de Westminster" },
+        { hora: "17:15", nombre: "St James's Park", descripcion: "Paseo entre lagos con vistas hacia el palacio.", tipo: "atraccion", busqueda: "St James Park Londres" },
+        { hora: "18:00", nombre: "Palacio de Buckingham", descripcion: "Residencia oficial del monarca británico.", tipo: "tour", busqueda: "Palacio de Buckingham" },
+        { hora: "19:00", nombre: "The Mall y Green Park", descripcion: "Finaliza el día paseando por la gran avenida ceremonial.", tipo: "atraccion", busqueda: "The Mall Londres" }
+      ]
+    },
+    {
+      titulo: "La City y la Torre de Londres",
+      actividades: [
+        { hora: "09:30", nombre: "Catedral de San Pablo", descripcion: "Una de las catedrales más espectaculares de Europa (Tiempo: 2 horas).", tipo: "tour", busqueda: "Catedral de San Pablo Londres" },
+        { hora: "11:45", nombre: "Paseo por la City", descripcion: "Recorrido por Mansion House, exterior del Banco de Inglaterra y sus calles históricas.", tipo: "atraccion", busqueda: "La City Londres" },
+        { hora: "14:00", nombre: "Comida", descripcion: "Almuerzo en el distrito financiero.", tipo: "resto" },
+        { hora: "15:30", nombre: "Torre de Londres", descripcion: "Castillo medieval histórico declarado Patrimonio de la Humanidad (Tiempo: 2 horas).", tipo: "tour", busqueda: "Torre de Londres" },
+        { hora: "17:45", nombre: "Tower Bridge", descripcion: "Cruza a pie el puente más famoso e icónico de Londres.", tipo: "tour", busqueda: "Tower Bridge Londres" },
+        { hora: "18:30", nombre: "Leadenhall Market", descripcion: "Mercado victoriano de impresionante arquitectura cubierto.", tipo: "atraccion", busqueda: "Leadenhall Market Londres" }
+      ]
+    },
+    {
+      titulo: "Kensington, Notting Hill y Covent Garden",
+      actividades: [
+        { hora: "10:00", nombre: "Palacio de Kensington", descripcion: "Residencia real con gran historia desde el siglo XVII.", tipo: "tour", busqueda: "Palacio de Kensington" },
+        { hora: "11:45", nombre: "Jardines de Kensington", descripcion: "Paseo relajante por los jardines reales anexos a Hyde Park.", tipo: "atraccion", busqueda: "Kensington Gardens" },
+        { hora: "12:30", nombre: "Royal Albert Hall (exterior)", descripcion: "Contempla la fachada del emblemático auditorio circular.", tipo: "atraccion", busqueda: "Royal Albert Hall Londres" },
+        { hora: "14:00", nombre: "Comida", descripcion: "Almuerzo en la zona de Kensington o Notting Hill.", tipo: "resto" },
+        { hora: "15:30", nombre: "Notting Hill", descripcion: "Recorrido por sus calles victorianas y casas de colores pastel.", tipo: "tour", busqueda: "Free tour Notting Hill" },
+        { hora: "17:00", nombre: "Covent Garden", descripcion: "Mercado histórico con artistas callejeros y ambiente animado.", tipo: "atraccion", busqueda: "Covent Garden Londres" },
+        { hora: "18:30", nombre: "Leicester Square", descripcion: "Epicentro del entretenimiento y los cines del West End.", tipo: "atraccion", busqueda: "Leicester Square Londres" },
+        { hora: "19:00", nombre: "Piccadilly Circus", descripcion: "Uno de los cruces de calles más icónicos y luminosos del mundo.", tipo: "atraccion", busqueda: "Piccadilly Circus" }
+      ]
+    },
+    {
+      titulo: "Greenwich y despedida",
+      actividades: [
+        { hora: "09:30", nombre: "Old Royal Naval College", descripcion: "Uno de los conjuntos barrocos más impresionantes del Reino Unido.", tipo: "tour", busqueda: "Old Royal Naval College Greenwich" },
+        { hora: "10:45", nombre: "Capilla del Old Royal Naval College", descripcion: "Magnífico ejemplo del barroco inglés y su decoración interior.", tipo: "atraccion", busqueda: "Painted Hall Greenwich" },
+        { hora: "11:30", nombre: "Parque de Greenwich", descripcion: "Sube hasta el mirador del observatorio con vistas al skyline de Londres.", tipo: "atraccion", busqueda: "Parque de Greenwich" },
+        { hora: "12:15", nombre: "Cutty Sark (exterior)", descripcion: "Admira el famoso velero clipper del siglo XIX preservado en dique seco.", tipo: "atraccion", busqueda: "Cutty Sark Greenwich" },
+        { hora: "14:00", nombre: "Comida de despedida", descripcion: "Después de comer, regreso al alojamiento si es necesario para recoger equipaje y salida hacia el aeropuerto.", tipo: "resto" }
+      ]
+    }
+  ],paris: [
+    {
+      titulo: "Île de la Cité, Notre-Dame y Barrio Latino",
+      actividades: [
+        { hora: "12:00", nombre: "Llegada a París", descripcion: "Traslado al alojamiento y dejar el equipaje.", tipo: "atraccion", busqueda: "Paris Centro" },
+        { hora: "12:45", nombre: "Paseo por la Île de la Cité", descripcion: "Explora el corazón histórico de París.", tipo: "atraccion", busqueda: "Ile de la Cite Paris" },
+        { hora: "13:15", nombre: "Exterior de la Catedral de Notre-Dame", descripcion: "Admira su arquitectura gótica y el entorno junto al Sena.", tipo: "atraccion", busqueda: "Catedral de Notre Dame Paris" },
+        { hora: "14:00", nombre: "Comida", descripcion: "Almuerzo en la zona del casco histórico.", tipo: "resto" },
+        { hora: "15:30", nombre: "Sainte-Chapelle", descripcion: "Famosa por sus impresionantes vidrieras medievales.", tipo: "tour", busqueda: "Sainte Chapelle Paris" },
+        { hora: "16:45", nombre: "Conciergerie", descripcion: "Antiguo palacio real y prisión durante la Revolución Francesa.", tipo: "tour", busqueda: "Conciergerie Paris" },
+        { hora: "17:45", nombre: "Barrio Latino", descripcion: "Pasea por Rue Saint-Séverin, Plaza Saint-Michel y sus librerías históricas.", tipo: "tour", busqueda: "Free tour Barrio Latino Paris" },
+        { hora: "19:00", nombre: "Orillas del Sena", descripcion: "Paseo al atardecer por la ribera del río.", tipo: "atraccion", busqueda: "Paseo barco Sena Paris" }
+      ]
+    },
+    {
+      titulo: "Torre Eiffel, Inválidos y Campos Elíseos",
+      actividades: [
+        { hora: "09:30", nombre: "Torre Eiffel", descripcion: "Subida o paseo por el Campo de Marte para contemplar el gran icono de la ciudad.", tipo: "tour", busqueda: "Entradas Torre Eiffel Paris" },
+        { hora: "11:30", nombre: "Hôtel des Invalides", descripcion: "Visita la iglesia del Domo y la tumba de Napoleón Bonaparte.", tipo: "tour", busqueda: "Los Invalidos Paris" },
+        { hora: "14:00", nombre: "Comida", descripcion: "Almuerzo en los alrededores de los Campos Elíseos.", tipo: "resto" },
+        { hora: "15:30", nombre: "Avenida de los Campos Elíseos", descripcion: "Recorre la avenida más famosa y elegante de París.", tipo: "atraccion", busqueda: "Campos Eliseos Paris" },
+        { hora: "17:00", nombre: "Arco del Triunfo", descripcion: "Subida al mirador para disfrutar de una de las mejores vistas panorámicas.", tipo: "tour", busqueda: "Arco del Triunfo Paris" },
+        { hora: "19:00", nombre: "Plaza Charles de Gaulle", descripcion: "Paseo final rodeando la icónica plaza radial.", tipo: "atraccion", busqueda: "Plaza Charles de Gaulle Paris" }
+      ]
+    },
+    {
+      titulo: "Palacio, jardines y Montmartre",
+      actividades: [
+        { hora: "10:00", nombre: "Palais Garnier", descripcion: "Uno de los teatros de ópera más bellos y majestuosos del mundo.", tipo: "tour", busqueda: "Opera Garnier Paris" },
+        { hora: "11:45", nombre: "Galerías Lafayette", descripcion: "Sube a la terraza para disfrutar de una vista panorámica gratuita de los tejados de París.", tipo: "atraccion", busqueda: "Galerias Lafayette Paris" },
+        { hora: "14:00", nombre: "Comida", descripcion: "Almuerzo en la zona comercial o de camino a Montmartre.", tipo: "resto" },
+        { hora: "15:30", nombre: "Basílica del Sagrado Corazón", descripcion: "Visita al templo y disfruta de sus espectaculares vistas sobre la ciudad.", tipo: "tour", busqueda: "Sacre Coeur Paris" },
+        { hora: "17:00", nombre: "Barrio de Montmartre", descripcion: "Explora la Place du Tertre, sus calles empedradas y sus cafeterías históricas.", tipo: "tour", busqueda: "Free tour Montmartre Paris" },
+        { hora: "19:00", nombre: "Paseo por Montmartre", descripcion: "Recorrido nocturno por el barrio bohemio antes de la cena.", tipo: "atraccion", busqueda: "Montmartre Paris" }
+      ]
+    },
+    {
+      titulo: "Le Marais y despedida",
+      actividades: [
+        { hora: "09:30", nombre: "Barrio de Le Marais", descripcion: "Uno de los barrios históricos mejor conservados de la capital francesa.", tipo: "atraccion", busqueda: "Le Marais Paris" },
+        { hora: "10:15", nombre: "Place des Vosges", descripcion: "Paseo por la plaza residencial más antigua y elegante de la ciudad.", tipo: "atraccion", busqueda: "Place des Vosges Paris" },
+        { hora: "11:15", nombre: "Hôtel de Ville (exterior)", descripcion: "Contempla el magnífico ayuntamiento neorrenacentista de París.", tipo: "atraccion", busqueda: "Hotel de Ville Paris" },
+        { hora: "12:00", nombre: "Pont Neuf", descripcion: "Crueza el puente de piedra más antiguo en pie de la ciudad.", tipo: "atraccion", busqueda: "Pont Neuf Paris" },
+        { hora: "12:45", nombre: "Último paseo por las orillas del Sena", descripcion: "Caminata de despedida por el centro histórico.", tipo: "atraccion", busqueda: "Sena Paris" },
+        { hora: "14:00", nombre: "Comida de despedida", descripcion: "Después de comer, regreso al alojamiento para recoger el equipaje y salida hacia el aeropuerto.", tipo: "resto" }
+      ]
+    }
   ]
 };
 
