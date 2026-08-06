@@ -397,7 +397,7 @@ app.get('/api/itinerario/:destino', async (req, res) => {
   });
 });
 
-// Endpoint de personalización con IA utilizando gemini-2.5-flash
+// Endpoint de personalización con IA
 app.post('/api/personalizar', async (req, res) => {
   const { destino, itinerarioActual, peticion } = req.body;
 
@@ -413,7 +413,7 @@ app.post('/api/personalizar', async (req, res) => {
 
     Petición o cambios indicados por el usuario: "${peticion}".
 
-    Devuelve ÚNICAMENTE un objeto JSON válido con la propiedad "itinerario". Mantén este formato exacto:
+    Devuelve ÚNICAMENTE un objeto JSON válido sin bloques markdown con la propiedad "itinerario". Mantén este formato exacto:
     {
       "itinerario": [
         {
@@ -434,14 +434,19 @@ app.post('/api/personalizar', async (req, res) => {
 
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-1.5-flash',
       contents: prompt,
       config: {
         responseMimeType: "application/json"
       }
     });
 
-    const datosIA = JSON.parse(response.text);
+    let textoLimpio = response.text.trim();
+    if (textoLimpio.startsWith('```')) {
+      textoLimpio = textoLimpio.replace(/^```(json)?\n?/, '').replace(/\n?```$/, '');
+    }
+
+    const datosIA = JSON.parse(textoLimpio);
 
     const itinerarioFormateado = datosIA.itinerario.map((dia, index) => ({
       dia: index + 1,
@@ -453,7 +458,7 @@ app.post('/api/personalizar', async (req, res) => {
         direccion: `${destino}, Centro`,
         valoracion: (4.6 + (Math.random() * 0.3)).toFixed(1),
         link_afiliado: (act.tipo === 'tour' || act.tipo === 'atraccion')
-          ? `https://www.civitatis.com/es/buscar/?q=${encodeURIComponent(act.nombre)}&a=${AFFILIATE_CONFIG.civitatis_id}`
+          ? `[https://www.civitatis.com/es/buscar/?q=$](https://www.civitatis.com/es/buscar/?q=$){encodeURIComponent(act.nombre)}&a=${AFFILIATE_CONFIG.civitatis_id}`
           : null,
         texto_boton: act.tipo === 'tour' ? '🎟️ Ver visitas guiadas' : '🎟️ Reservar entradas'
       })),
