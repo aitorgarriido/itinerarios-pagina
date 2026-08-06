@@ -95,6 +95,14 @@
     let itinerarioActualData = null;
     let destinoActualNombre = '';
 
+    // Función auxiliar para limpiar URLs mal formateadas
+    function limpiarUrl(url) {
+      if (!url) return null;
+      let limpia = url.replace(/[\[\]\(\)]/g, '').trim();
+      const match = limpia.match(/https?:\/\/[^\s]+/);
+      return match ? match[0] : limpia;
+    }
+
     document.addEventListener('DOMContentLoaded', async () => {
       const selectDestino = document.getElementById('select-destino');
 
@@ -217,8 +225,9 @@
         `;
 
         dia.actividades.forEach(act => {
-          const isResto = act.link_afiliado === null && act.descripcion.toLowerCase().includes('cena') || act.descripcion.toLowerCase().includes('almuerzo') || act.descripcion.toLowerCase().includes('desayuno');
+          const isResto = act.link_afiliado === null && (act.descripcion.toLowerCase().includes('cena') || act.descripcion.toLowerCase().includes('almuerzo') || act.descripcion.toLowerCase().includes('desayuno'));
           const badgeColor = isResto ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-slate-800 text-slate-300 border-slate-700';
+          const linkLimpio = limpiarUrl(act.link_afiliado);
 
           html += `
             <div class="flex flex-col sm:flex-row gap-4 p-4 rounded-xl bg-slate-950/50 border border-slate-800/80 hover:border-slate-700 transition">
@@ -233,9 +242,9 @@
                   <span class="text-xs text-amber-400 font-medium">★ ${act.valoracion}</span>
                 </div>
                 <p class="text-sm text-slate-400 leading-relaxed" contenteditable="true">${act.descripcion}</p>
-                ${act.link_afiliado ? `
+                ${linkLimpio ? `
                   <div class="pt-2">
-                    <a href="${act.link_afiliado}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center text-xs text-sky-400 hover:text-sky-300 font-semibold gap-1">
+                    <a href="${linkLimpio}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center text-xs text-sky-400 hover:text-sky-300 font-semibold gap-1">
                       ${act.texto_boton} &rarr;
                     </a>
                   </div>
@@ -246,13 +255,14 @@
         });
 
         if (dia.hotel_recomendado) {
+          const bookingLinkLimpio = limpiarUrl(dia.hotel_recomendado.booking_link);
           html += `
             <div class="mt-6 pt-4 border-t border-slate-800/60 flex flex-col sm:flex-row items-center justify-between gap-4 bg-sky-950/20 p-4 rounded-xl border border-sky-900/30">
               <div>
                 <h5 class="text-sm font-bold text-slate-200">${dia.hotel_recomendado.nombre}</h5>
                 <p class="text-xs text-slate-400">${dia.hotel_recomendado.descripcion}</p>
               </div>
-              <a href="${dia.hotel_recomendado.booking_link}" target="_blank" rel="noopener noreferrer" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs font-semibold rounded-lg transition whitespace-nowrap">
+              <a href="${bookingLinkLimpio}" target="_blank" rel="noopener noreferrer" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs font-semibold rounded-lg transition whitespace-nowrap">
                 ${dia.hotel_recomendado.texto_boton}
               </a>
             </div>
