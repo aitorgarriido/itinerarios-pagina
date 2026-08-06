@@ -190,54 +190,55 @@ const ITINERARIOS_BASE = {
   ],
   granada: [
     {
-      titulo: "Casco histórico y atardecer en el Albaicín",
+      titulo: "Día 1 – Casco Histórico y Albaicín",
       actividades: [
-        { hora: "12:00", nombre: "Llegada a Granada", descripcion: "Llegada al alojamiento y check-in (o dejar el equipaje).", tipo: "atraccion", busqueda: "Granada Centro" },
-        { hora: "12:45", nombre: "Plaza Nueva", descripcion: "Empieza a conocer el casco histórico de la ciudad.", tipo: "atraccion", busqueda: "Plaza Nueva Granada" },
+        { hora: "12:00", nombre: "Llegada a Granada", descripcion: "Check-in o dejar el equipaje.", tipo: "atraccion", busqueda: "Granada Centro" },
+        { hora: "12:45", nombre: "Plaza Nueva", descripcion: "Puerta de entrada al casco histórico.", tipo: "atraccion", busqueda: "Plaza Nueva Granada" },
         { hora: "13:10", nombre: "Carrera del Darro", descripcion: "Recorre una de las calles más bonitas de España.", tipo: "atraccion", busqueda: "Carrera del Darro Granada" },
-        { hora: "14:00", nombre: "Comida de tapas", descripcion: "Disfruta del almuerzo en los bares tradicionales del centro histórico.", tipo: "resto" },
-        { hora: "15:30", nombre: "Paseo de los Tristes", descripcion: "Disfruta de las vistas de la Alhambra desde abajo.", tipo: "atraccion", busqueda: "Paseo de los Tristes Granada" },
-        { hora: "16:00", nombre: "Barrio del Albaicín", descripcion: "Recorre tranquilamente: Calle Calderería Nueva, Placeta de Carvajales, Plaza Larga y sus calles medievales.", tipo: "tour", busqueda: "Free tour Albaicin Granada" },
-        { hora: "18:00", nombre: "Mirador de San Nicolás", descripcion: "Quédate hasta el atardecer contemplando la Alhambra.", tipo: "atraccion", busqueda: "Mirador de San Nicolas Granada" },
-        { hora: "19:30", nombre: "Bajada por el Albaicín iluminado", descripcion: "Paseo nocturno por sus callejuelas empedradas hasta el centro.", tipo: "atraccion", busqueda: "Albaicin Granada" }
+        { hora: "14:00", nombre: "Comida en Bar Aixa", descripcion: "Perfecto para este día, ya que se encuentra muy cerca del Albaicín.", tipo: "resto" },
+        { hora: "15:30", nombre: "Paseo de los Tristes", descripcion: "Disfruta de la icónica vista al pie de la Alhambra.", tipo: "atraccion", busqueda: "Paseo de los Tristes Granada" },
+        { hora: "16:00", nombre: "Barrio del Albaicín", descripcion: "Calderería Nueva, Placeta de Carvajales, Plaza Larga y sus calles moriscas.", tipo: "tour", busqueda: "Barrio Albaicin Granada" },
+        { hora: "18:00", nombre: "Mirador de San Nicolás", descripcion: "Disfruta del atardecer con la Alhambra de fondo.", tipo: "atraccion", busqueda: "Mirador de San Nicolas Granada" },
+        { hora: "19:30", nombre: "Descenso por el Albaicín", descripcion: "Paseo de regreso disfrutando del ambiente nocturno.", tipo: "atraccion", busqueda: "Albaicin Granada" }
       ]
     },
     {
-      titulo: "La Alhambra y el Barrio del Realejo",
+      titulo: "Día 2 – La Alhambra y el Realejo",
       actividades: [
-        { hora: "09:00", nombre: "Entrada a la Alhambra", descripcion: "Recorrido completo: Alcazaba, Palacios Nazaríes, Palacio de Carlos V, Medina, Generalife y Jardines (5 horas aprox).", tipo: "tour", busqueda: "Entradas Alhambra de Granada" },
-        { hora: "14:00", nombre: "Comida", descripcion: "Pausa para almorzar y descansar tras la extensa visita a la Alhambra.", tipo: "resto" },
-        { hora: "15:30", nombre: "Bosque de la Alhambra", descripcion: "Paseo refrescante entre la vegetación descendiendo hacia el centro.", tipo: "atraccion", busqueda: "Bosque de la Alhambra Granada" },
-        { hora: "16:15", nombre: "Cuesta de Gomérez", descripcion: "Descenso hacia la Puerta de las Granadas observando las tiendas de artesanía y taracea.", tipo: "atraccion", busqueda: "Cuesta de Gomerez Granada" },
-        { hora: "17:00", nombre: "Barrio del Realejo", descripcion: "Explora el antiguo barrio judío: Campo del Príncipe, Iglesia de Santo Domingo y calles históricas.", tipo: "atraccion", busqueda: "Barrio Realejo Granada" },
-        { hora: "18:30", nombre: "Carmen de los Mártires", descripcion: "Uno de los jardines más bonitos de Granada.", tipo: "atraccion", busqueda: "Carmen de los Martires Granada" }
+        { hora: "09:00", nombre: "Alhambra", descripcion: "Visita completa: Alcazaba, Palacios Nazaríes, Palacio de Carlos V, Medina, Generalife y Jardines.", tipo: "tour", busqueda: "Entradas Alhambra de Granada" },
+        { hora: "14:00", nombre: "Comida en Los Manueles", descripcion: "Uno de los restaurantes más tradicionales de Granada y muy bien situado tras la visita a la Alhambra.", tipo: "resto" },
+        { hora: "15:45", nombre: "Bosque de la Alhambra", descripcion: "Paseo a la sombra de sus árboles descendiendo hacia el centro.", tipo: "atraccion", busqueda: "Bosque de la Alhambra Granada" },
+        { hora: "16:30", nombre: "Cuesta de Gomérez", descripcion: "Descenso hacia la Puerta de las Granadas observando las tiendas artesanales.", tipo: "atraccion", busqueda: "Cuesta de Gomerez Granada" },
+        { hora: "17:00", nombre: "Barrio del Realejo", descripcion: "Recorrido por el antiguo barrio judío: Campo del Príncipe e Iglesia de Santo Domingo.", tipo: "atraccion", busqueda: "Barrio Realejo Granada" },
+        { hora: "18:30", nombre: "Carmen de los Mártires", descripcion: "Paseo por sus tranquilos jardines y miradores.", tipo: "atraccion", busqueda: "Carmen de los Martires Granada" }
       ]
     },
     {
-      titulo: "Catedral, monasterios y Sacromonte",
+      titulo: "Día 3 – Catedral, Capilla Real y Sacromonte",
       actividades: [
-        { hora: "10:00", nombre: "Catedral de Granada", descripcion: "Visita a la magistral obra cumbre del Renacimiento español.", tipo: "atraccion", busqueda: "Catedral de Granada" },
-        { hora: "11:00", nombre: "Capilla Real de Granada", descripcion: "Panteón donde descansan los restos de los Reyes Católicos.", tipo: "atraccion", busqueda: "Capilla Real Granada" },
-        { hora: "12:00", nombre: "Alcaicería", descripcion: "Antiguo zoco árabe con laberínticas callejuelas dedicadas al comercio artesanal.", tipo: "atraccion", busqueda: "Alcaiceria Granada" },
-        { hora: "12:45", nombre: "Plaza Bib-Rambla", descripcion: "Centro neurálgico con animadas terrazas donde tomar algo.", tipo: "atraccion", busqueda: "Plaza Bib Rambla Granada" },
-        { hora: "14:00", nombre: "Comida", descripcion: "Almuerzo en la zona centro.", tipo: "resto" },
-        { hora: "15:45", nombre: "Monasterio de San Jerónimo", descripcion: "Majestuoso monasterio y joya del renacimiento hispano.", tipo: "atraccion", busqueda: "Monasterio de San Jeronimo Granada" },
-        { hora: "17:00", nombre: "Barrio del Sacromonte", descripcion: "Paseo por el pintoresco barrio gitano con sus famosas casas-cueva.", tipo: "atraccion", busqueda: "Sacromonte Granada" },
-        { hora: "18:00", nombre: "Abadía del Sacromonte", descripcion: "Complejo religioso e histórico situado en lo alto del monte Valparaíso.", tipo: "atraccion", busqueda: "Abadia del Sacromonte Granada" },
-        { hora: "19:30", nombre: "Espectáculo flamenco en una cueva (opcional)", descripcion: "Disfruta de una zambra tradicional en el Sacromonte.", tipo: "tour", busqueda: "Espectaculo Flamenco Cueva Sacromonte Granada" }
+        { hora: "10:00", nombre: "Catedral de Granada", descripcion: "Visita a la joya del Renacimiento español.", tipo: "atraccion", busqueda: "Catedral de Granada" },
+        { hora: "11:15", nombre: "Capilla Real de Granada", descripcion: "Lugar de sepultura de los Reyes Católicos.", tipo: "atraccion", busqueda: "Capilla Real Granada" },
+        { hora: "12:15", nombre: "Alcaicería", descripcion: "Recorre el antiguo zoco árabe.", tipo: "atraccion", busqueda: "Alcaiceria Granada" },
+        { hora: "12:45", nombre: "Plaza Bib-Rambla", descripcion: "Disfruta del ambiente de una de las plazas más animadas.", tipo: "atraccion", busqueda: "Plaza Bib Rambla Granada" },
+        { hora: "14:00", nombre: "Comida en Bar Los Diamantes", descripcion: "Muy recomendable para disfrutar de las famosas tapas granadinas.", tipo: "resto" },
+        { hora: "15:45", nombre: "Barrio del Sacromonte", descripcion: "Paseo por el pintoresco barrio de las casas cueva.", tipo: "atraccion", busqueda: "Sacromonte Granada" },
+        { hora: "17:00", nombre: "Abadía del Sacromonte", descripcion: "Visita al complejo religioso en la cima del monte.", tipo: "atraccion", busqueda: "Abadia del Sacromonte Granada" },
+        { hora: "18:30", nombre: "Mirador de Mario Maya", descripcion: "Impresionantes vistas panorámicas.", tipo: "atraccion", busqueda: "Mirador de Mario Maya Granada" },
+        { hora: "19:30", nombre: "Espectáculo flamenco en una cueva", descripcion: "Disfruta de una zambra gitana tradicional (opcional).", tipo: "tour", busqueda: "Espectaculo Flamenco Cueva Sacromonte Granada" }
       ]
     },
     {
-      titulo: "Cartuja y despedida",
+      titulo: "Día 4 – San Juan de Dios, Cartuja y despedida",
       actividades: [
-        { hora: "09:30", nombre: "Basílica de San Juan de Dios", descripcion: "Una de las iglesias barrocas más impresionantes de España.", tipo: "atraccion", busqueda: "Basilica San Juan de Dios Granada" },
-        { hora: "10:30", nombre: "Monasterio de la Cartuja", descripcion: "Probablemente el interior barroco más espectacular de Granada.", tipo: "atraccion", busqueda: "Monasterio de la Cartuja Granada" },
-        { hora: "12:15", nombre: "Hospital Real", descripcion: "Sede histórica de la Universidad de Granada.", tipo: "atraccion", busqueda: "Hospital Real Granada" },
-        { hora: "13:00", nombre: "Último paseo por el centro", descripcion: "Recorre Calle Reyes Católicos, Plaza Isabel la Católica, tiendas de recuerdos o alguna tetería.", tipo: "atraccion", busqueda: "Plaza Isabel la Catolica Granada" },
-        { hora: "14:00", nombre: "Comida", descripcion: "Después de comer, regreso y salida de Granada.", tipo: "resto" }
+        { hora: "09:30", nombre: "Basílica de San Juan de Dios", descripcion: "Uno de los templos barrocos más impresionantes de España.", tipo: "atraccion", busqueda: "Basilica San Juan de Dios Granada" },
+        { hora: "10:30", nombre: "Monasterio de la Cartuja", descripcion: "Probablemente el interior barroco más espectacular de Andalucía.", tipo: "atraccion", busqueda: "Monasterio de la Cartuja Granada" },
+        { hora: "12:15", nombre: "Hospital Real", descripcion: "Actual sede del Rectorado de la Universidad de Granada.", tipo: "atraccion", busqueda: "Hospital Real Granada" },
+        { hora: "13:00", nombre: "Último paseo por el centro", descripcion: "Tiempo libre para compras o pasear.", tipo: "atraccion", busqueda: "Granada Centro" },
+        { hora: "14:00", nombre: "Comida en Bar Avila", descripcion: "Ideal para despedirse de Granada con sus famosas tapas. Después de comer, regreso al alojamiento para recoger equipaje y salida.", tipo: "resto" }
       ]
     }
-  ],londres: [
+  ],
+  londres: [
     {
       titulo: "Llegada, Westminster y St. James's",
       actividades: [
@@ -285,7 +286,8 @@ const ITINERARIOS_BASE = {
         { hora: "14:00", nombre: "Comida de despedida", descripcion: "Después de comer, regreso al alojamiento si es necesario para recoger equipaje y salida hacia el aeropuerto.", tipo: "resto" }
       ]
     }
-  ],paris: [
+  ],
+  paris: [
     {
       titulo: "Île de la Cité, Notre-Dame y Barrio Latino",
       actividades: [
