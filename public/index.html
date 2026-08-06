@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Itinerarios Inteligentes de Viaje</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              dark: '#0f172a',
+              card: '#1e293b',
+              accent: '#38bdf8'
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans">
+
+  <!-- Header -->
+  <header class="border-b border-slate-800 bg-slate-900/50 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+      <div class="flex items-center space-x-2">
+        <span class="text-2xl">✈️</span>
+        <span class="text-xl font-bold bg-gradient-to-r from-sky-400 to-blue-500 bg-clip-text text-transparent">TravelSaaS</span>
+      </div>
+      <button onclick="window.print()" id="btn-print" class="hidden bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2 rounded-lg text-sm font-medium transition border border-slate-700">
+        🖨️ Exportar / Imprimir
+      </button>
+    </div>
+  </header>
+
+  <!-- Hero & Selector -->
+  <main class="flex-grow max-w-6xl w-full mx-auto px-4 py-10">
+    <div class="text-center max-w-2xl mx-auto mb-10">
+      <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight mb-4">
+        Rutas optimizadas para tu próximo viaje
+      </h1>
+      <p class="text-slate-400 text-lg">
+        Selecciona uno de nuestros destinos y obtén un itinerario organizado por cercanía geográfica.
+      </p>
+
+      <form id="travel-form" class="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
+        <select id="select-destino" class="w-full sm:w-80 px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500">
+          <option value="" disabled selected>Cargando destinos...</option>
+        </select>
+
+        <button type="submit" class="px-8 py-3 bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold rounded-xl transition shadow-lg shadow-sky-500/20">
+          Ver Itinerario
+        </button>
+      </form>
+    </div>
+
+    <!-- Indicador de Carga -->
+    <div id="loading" class="hidden text-center py-12">
+      <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-sky-500 border-t-transparent"></div>
+      <p class="mt-4 text-slate-400">Cargando itinerario optimizado...</p>
+    </div>
+
+    <!-- Contenedor del Itinerario -->
+    <div id="itinerary-container" class="space-y-10"></div>
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const selectDestino = document.getElementById('select-destino');
+
+      try {
+        const res = await fetch('/api/ciudades');
+        const ciudades = await res.json();
+        
+        selectDestino.innerHTML = '<option value="" disabled selected>Selecciona un destino</option>';
+        ciudades.forEach(c => {
+          selectDestino.innerHTML += `<option value="${c.slug}">${c.nombre} (${c.dias} días)</option>`;
+        });
+      } catch (err) {
+        selectDestino.innerHTML = '<option value="">Error al cargar destinos</option>';
+      }
+    });
+
+    document.getElementById('travel-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const destino = document.getElementById('select-destino').value;
+      if (!destino) return;
+
+      const loading = document.getElementById('loading');
+      const container = document.getElementById('itinerary-container');
+      const printBtn = document.getElementById('btn-print');
+
+      loading.classList.remove('hidden');
+      container.innerHTML = '';
+
+      try {
+        const res = await fetch(`/api/itinerario/${destino}`);
+        const data = await res.json();
+        
+        loading.classList.add('hidden');
+        printBtn.classList.remove('hidden');
+        renderItinerario(data);
+      } catch (err) {
+        loading.classList.add('hidden');
+        container.innerHTML = `<p class="text-center text-red-400">Error al obtener la ruta. Inténtalo de nuevo.</p>`;
+      }
+    });
+
+    function renderItinerario(data) {
+      const container = document.getElementById('itinerary-container');
+      
+      let html = `
+        <div class="border-b border-slate-800 pb-6 mb-8">
+          <h2 class="text-3xl font-bold text-white mb-2">Itinerario completo por ${data.destino}</h2>
+          <p class="text-sky-400 font-medium">${data.duracion_dias} días optimizados con rutas lógicas y recomendaciones de restaurantes.</p>
+        </div>
+      `;
+
+      data.itinerario.forEach(dia => {
+        html += `
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-xl">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-4 mb-6">
+              <span class="bg-sky-500/10 text-sky-400 border border-sky-500/20 px-3 py-1 rounded-full text-sm font-semibold">Día ${dia.dia}</span>
+              <h3 class="text-xl font-bold text-slate-100">${dia.titulo}</h3>
+            </div>
+
+            <div class="space-y-6">
+        `;
+
+        dia.actividades.forEach(act => {
+          const isResto = act.link_afiliado === null && act.descripcion.toLowerCase().includes('cena') || act.descripcion.toLowerCase().includes('almuerzo') || act.descripcion.toLowerCase().includes('desayuno');
+          const badgeColor = isResto ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-slate-800 text-slate-300 border-slate-700';
+
+          html += `
+            <div class="flex flex-col sm:flex-row gap-4 p-4 rounded-xl bg-slate-950/50 border border-slate-800/80 hover:border-slate-700 transition">
+              <div class="sm:w-24 flex-shrink-0">
+                <span class="inline-block px-2.5 py-1 rounded-md text-xs font-mono font-bold ${badgeColor} border">
+                  ${act.hora}
+                </span>
+              </div>
+              <div class="flex-grow space-y-1">
+                <div class="flex items-center justify-between">
+                  <h4 class="font-bold text-slate-200 text-base" contenteditable="true">${act.nombre}</h4>
+                  <span class="text-xs text-amber-400 font-medium">★ ${act.valoracion}</span>
+                </div>
+                <p class="text-sm text-slate-400 leading-relaxed" contenteditable="true">${act.descripcion}</p>
+                ${act.link_afiliado ? `
+                  <div class="pt-2">
+                    <a href="${act.link_afiliado}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center text-xs text-sky-400 hover:text-sky-300 font-semibold gap-1">
+                      ${act.texto_boton} &rarr;
+                    </a>
+                  </div>
+                ` : ''}
+              </div>
+            </div>
+          `;
+        });
+
+        if (dia.hotel_recomendado) {
+          html += `
+            <div class="mt-6 pt-4 border-t border-slate-800/60 flex flex-col sm:flex-row items-center justify-between gap-4 bg-sky-950/20 p-4 rounded-xl border border-sky-900/30">
+              <div>
+                <h5 class="text-sm font-bold text-slate-200">${dia.hotel_recomendado.nombre}</h5>
+                <p class="text-xs text-slate-400">${dia.hotel_recomendado.descripcion}</p>
+              </div>
+              <a href="${dia.hotel_recomendado.booking_link}" target="_blank" rel="noopener noreferrer" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs font-semibold rounded-lg transition whitespace-nowrap">
+                ${dia.hotel_recomendado.texto_boton}
+              </a>
+            </div>
+          `;
+        }
+
+        html += `
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+  </script>
+</body>
+</html>
