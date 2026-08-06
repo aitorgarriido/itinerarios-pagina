@@ -6,8 +6,9 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Inicialización de la IA con Google GenAI SDK
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+// Inicialización de la IA asegurando la lectura limpia de la clave de entorno
+const apiKey = (process.env.GEMINI_API_KEY || '').trim();
+const ai = new GoogleGenAI({ apiKey: apiKey });
 
 app.use(express.json());
 app.use(express.static('public'));
@@ -396,7 +397,7 @@ app.get('/api/itinerario/:destino', async (req, res) => {
   });
 });
 
-// Ruta nueva para personalizar itinerarios usando IA (Gemini)
+// Endpoint de personalización con IA utilizando gemini-1.5-flash
 app.post('/api/personalizar', async (req, res) => {
   const { destino, itinerarioActual, peticion } = req.body;
 
@@ -423,7 +424,7 @@ app.post('/api/personalizar', async (req, res) => {
               "hora": "09:00",
               "nombre": "Nombre de la atracción o lugar",
               "descripcion": "Descripción concisa y útil",
-              "tipo": "tour" // o "atraccion" o "resto"
+              "tipo": "tour"
             }
           ]
         }
@@ -433,7 +434,7 @@ app.post('/api/personalizar', async (req, res) => {
 
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-1.5-flash',
       contents: prompt,
       config: {
         responseMimeType: "application/json"
@@ -442,7 +443,6 @@ app.post('/api/personalizar', async (req, res) => {
 
     const datosIA = JSON.parse(response.text);
 
-    // Formatear los datos devueltos por la IA para integrar tus enlaces de afiliados
     const itinerarioFormateado = datosIA.itinerario.map((dia, index) => ({
       dia: index + 1,
       titulo: dia.titulo,
@@ -471,7 +471,7 @@ app.post('/api/personalizar', async (req, res) => {
       itinerario: itinerarioFormateado
     });
   } catch (error) {
-    console.error("Error al generar con IA:", error);
+    console.error("Error detallado en la IA:", error);
     res.status(500).json({ error: "Ocurrió un error al procesar el itinerario con IA." });
   }
 });
