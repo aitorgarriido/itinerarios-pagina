@@ -332,19 +332,6 @@
     font-size: 0.74rem;
     color: var(--slate-dim);
   }
-  .activity-dot {
-    position: absolute;
-    left: 1.55rem;
-    top: 0.3rem;
-    width: 9px;
-    height: 9px;
-    border-radius: 50%;
-    background: var(--bg-ticket);
-    border: 2px solid var(--brass);
-    transform: translateX(-50%);
-  }
-  .activity.is-resto .activity-dot { border-color: var(--teal); }
-
   .activity-body { padding-left: 0.4rem; }
   .activity-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.8rem; }
   .activity-name {
@@ -773,7 +760,6 @@
         html += `
           <div class="activity ${esResto ? 'is-resto' : ''}">
             <span class="activity-time">${act.hora}</span>
-            <span class="activity-dot"></span>
             <div class="activity-body">
               <div class="activity-head">
                 <p class="activity-name" contenteditable="true">${act.nombre}</p>
