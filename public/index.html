@@ -48,13 +48,19 @@
         Rutas optimizadas para tu próximo viaje
       </h1>
       <p class="text-slate-400 text-lg">
-        Selecciona uno de nuestros destinos y obtén un itinerario organizado por cercanía geográfica.
+        Escribe cualquier ciudad del mundo y obtén un itinerario organizado por cercanía geográfica.
       </p>
 
       <form id="travel-form" class="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
-        <select id="select-destino" class="w-full sm:w-80 px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500">
-          <option value="" disabled selected>Cargando destinos...</option>
-        </select>
+        <input
+          type="text"
+          id="input-destino"
+          list="ciudades-sugeridas"
+          placeholder="Escribe una ciudad, ej: Tokio, Sevilla, Berlín..."
+          autocomplete="off"
+          class="w-full sm:w-80 px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
+        />
+        <datalist id="ciudades-sugeridas"></datalist>
 
         <button type="submit" class="px-8 py-3 bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold rounded-xl transition shadow-lg shadow-sky-500/20">
           Ver Itinerario
@@ -86,6 +92,9 @@
       <p id="loading-text" class="mt-4 text-slate-400">Cargando itinerario optimizado...</p>
     </div>
 
+    <!-- Mensaje de error -->
+    <div id="error-msg" class="hidden text-center py-8 text-red-400"></div>
+
     <!-- Contenedor del Itinerario -->
     <div id="itinerary-container" class="space-y-10"></div>
   </main>
@@ -103,42 +112,45 @@
       return match ? match[0] : limpia;
     }
 
+    // Carga la lista de ciudades famosas como sugerencias del buscador.
+    // Es solo una ayuda visual: el campo acepta cualquier ciudad del mundo.
     document.addEventListener('DOMContentLoaded', async () => {
-      const selectDestino = document.getElementById('select-destino');
-
+      const datalist = document.getElementById('ciudades-sugeridas');
       try {
-        const res = await fetch('/api/ciudades');
+        const res = await fetch('/api/sugerencias-ciudades');
         const ciudades = await res.json();
-        
-        selectDestino.innerHTML = '<option value="" disabled selected>Selecciona un destino</option>';
-        ciudades.forEach(c => {
-          selectDestino.innerHTML += `<option value="${c.slug}">${c.nombre} (${c.dias} días)</option>`;
-        });
+        datalist.innerHTML = ciudades.map(c => `<option value="${c}"></option>`).join('');
       } catch (err) {
-        selectDestino.innerHTML = '<option value="">Error al cargar destinos</option>';
+        // Si falla, el buscador sigue funcionando sin sugerencias.
       }
     });
 
     document.getElementById('travel-form').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const destino = document.getElementById('select-destino').value;
+      const destino = document.getElementById('input-destino').value.trim();
       if (!destino) return;
 
       const loading = document.getElementById('loading');
       const loadingText = document.getElementById('loading-text');
       const container = document.getElementById('itinerary-container');
+      const errorMsg = document.getElementById('error-msg');
       const printBtn = document.getElementById('btn-print');
       const panelIA = document.getElementById('panel-ia');
 
-      loadingText.innerText = 'Cargando itinerario optimizado...';
+      loadingText.innerText = `✨ Diseñando tu itinerario por ${destino}...`;
       loading.classList.remove('hidden');
+      errorMsg.classList.add('hidden');
       panelIA.classList.add('hidden');
       container.innerHTML = '';
 
       try {
-        const res = await fetch(`/api/itinerario/${destino}`);
+        const res = await fetch(`/api/itinerario/${encodeURIComponent(destino)}`);
         const data = await res.json();
-        
+
+        if (!res.ok) {
+          throw new Error(data.error || 'No se pudo generar el itinerario.');
+        }
+
         // Guardar referencia en variables globales
         itinerarioActualData = data.itinerario;
         destinoActualNombre = data.destino;
@@ -149,7 +161,8 @@
         renderItinerario(data);
       } catch (err) {
         loading.classList.add('hidden');
-        container.innerHTML = `<p class="text-center text-red-400">Error al obtener la ruta. Inténtalo de nuevo.</p>`;
+        errorMsg.textContent = err.message || 'Error al obtener la ruta. Inténtalo de nuevo.';
+        errorMsg.classList.remove('hidden');
       }
     });
 

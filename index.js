@@ -19,6 +19,8 @@ const AFFILIATE_CONFIG = {
   getyourguide_id: process.env.GYG_ID || 'TU_ID_GETYOURGUIDE'
 };
 
+// Ciudades "premium" con itinerario curado a mano: se sirven al instante, sin
+// coste de IA. Cualquier otra ciudad del mundo se genera dinámicamente.
 const ITINERARIOS_BASE = {
   praga: [
     {
@@ -342,43 +344,53 @@ const ITINERARIOS_BASE = {
   ]
 };
 
-app.get('/api/ciudades', (req, res) => {
-  const ciudades = Object.keys(ITINERARIOS_BASE).map(slug => ({
-    slug,
-    nombre: slug.charAt(0).toUpperCase() + slug.slice(1),
-    dias: ITINERARIOS_BASE[slug].length
-  }));
-  res.json(ciudades);
-});
+// Lista de ciudades famosas para sugerir en el buscador (no limita lo que se
+// puede escribir: cualquier ciudad del mundo funciona igualmente).
+const CIUDADES_SUGERIDAS = [
+  "Madrid", "Barcelona", "Sevilla", "Valencia", "Granada", "Bilbao", "San Sebastián",
+  "París", "Londres", "Roma", "Viena", "Praga", "Oporto", "Lisboa", "Berlín", "Múnich",
+  "Ámsterdam", "Bruselas", "Budapest", "Dresde", "Venecia", "Florencia", "Milán",
+  "Atenas", "Estambul", "Copenhague", "Estocolmo", "Dublín", "Edimburgo", "Varsovia",
+  "Tokio", "Kioto", "Seúl", "Bangkok", "Singapur", "Dubái", "Nueva York", "Los Ángeles",
+  "México DF", "Buenos Aires", "Río de Janeiro", "Marrakech", "El Cairo"
+];
 
-app.get('/api/itinerario/:destino', async (req, res) => {
-  const { destino } = req.params;
-  const destinoNormalizado = destino.toLowerCase().trim();
+// Normaliza un nombre de ciudad para comparar contra las claves internas
+// (minúsculas y sin acentos): "París" -> "paris", "Múnich" -> "munich".
+function normalizarCiudad(texto) {
+  return texto
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .trim();
+}
 
-  if (!ITINERARIOS_BASE[destinoNormalizado]) {
-    return res.status(404).json({ error: "Ciudad no disponible por el momento." });
-  }
+function capitalizar(texto) {
+  return texto
+    .trim()
+    .split(/\s+/)
+    .map(p => p.charAt(0).toUpperCase() + p.slice(1))
+    .join(' ');
+}
 
-  const destinoFormateado = destino.charAt(0).toUpperCase() + destino.slice(1).toLowerCase();
-  const destinoLimpio = encodeURIComponent(destinoFormateado);
-  const bookingLink = `https://www.booking.com/searchresults.es.html?ss=${destinoLimpio}&aid=${AFFILIATE_CONFIG.booking_aid}`;
+// Convierte una lista de "días" (titulo + actividades) -- ya sea de la base
+// curada o generada por IA -- en la respuesta final con enlaces de afiliado.
+function formatearItinerario(destinoFormateado, diasPlantilla) {
+  const bookingLink = `https://www.booking.com/searchresults.es.html?ss=${encodeURIComponent(destinoFormateado)}&aid=${AFFILIATE_CONFIG.booking_aid}`;
 
-  const plantillasDias = ITINERARIOS_BASE[destinoNormalizado];
-  const itinerarioGenerado = plantillasDias.map((plantilla, index) => {
-    const actividadesFormateadas = plantilla.actividades.map(act => {
-      // Construir la consulta limpia para la URL de Civitatis
-      const queryBusqueda = encodeURIComponent((act.busqueda || act.nombre) + ' ' + destinoFormateado);
-      
+  return diasPlantilla.map((plantilla, index) => {
+    const actividadesFormateadas = (plantilla.actividades || []).map(act => {
+      const linkAfiliado = (act.tipo === 'tour' || act.tipo === 'atraccion')
+        ? `https://www.civitatis.com/es/buscar/?q=${encodeURIComponent((act.busqueda || act.nombre) + ' ' + destinoFormateado)}&a=${AFFILIATE_CONFIG.civitatis_id}`
+        : null;
+
       return {
-        hora: act.hora,
+        hora: act.hora || "10:00",
         nombre: act.nombre,
         descripcion: act.descripcion,
         direccion: `${destinoFormateado}, Centro`,
         valoracion: (4.6 + (Math.random() * 0.3)).toFixed(1),
-        // FORMATO CORRECTO CON /buscar/
-link_afiliado: (act.tipo === 'tour' || act.tipo === 'atraccion')
-  ? `https://www.civitatis.com/es/buscar/?q=${encodeURIComponent((act.busqueda || act.nombre) + ' ' + destinoFormateado)}&a=${AFFILIATE_CONFIG.civitatis_id}`
-  : null,
+        link_afiliado: linkAfiliado,
         texto_boton: act.tipo === 'tour' ? '🎟️ Ver visitas guiadas' : '🎟️ Reservar entradas'
       };
     });
@@ -395,12 +407,99 @@ link_afiliado: (act.tipo === 'tour' || act.tipo === 'atraccion')
       }
     };
   });
+}
 
-  res.json({
-    destino: destinoFormateado,
-    duracion_dias: itinerarioGenerado.length,
-    itinerario: itinerarioGenerado
+// Genera un itinerario completo desde cero con IA para cualquier ciudad del
+// mundo que no esté en la lista curada ITINERARIOS_BASE.
+async function generarItinerarioIA(destinoFormateado) {
+  const prompt = `
+    Eres un guía de viajes experto que diseña itinerarios turísticos optimizados por cercanía geográfica.
+
+    Crea un itinerario turístico completo y realista para la ciudad de "${destinoFormateado}", de entre 3 y 4 días,
+    agrupando cada día por zonas cercanas entre sí para minimizar desplazamientos (igual que haría un guía local).
+    Incluye los monumentos, museos y lugares más emblemáticos de la ciudad, así como recomendaciones de restaurantes
+    reales y conocidos para desayuno/almuerzo/cena cuando tenga sentido en el horario.
+
+    Devuelve ÚNICAMENTE un objeto JSON válido, sin bloques markdown, con esta forma exacta:
+    {
+      "dias": [
+        {
+          "titulo": "Título breve y descriptivo de la zona o temática del día",
+          "actividades": [
+            {
+              "hora": "09:00",
+              "nombre": "Nombre del lugar, atracción o restaurante",
+              "descripcion": "Descripción concisa y útil (una o dos frases)",
+              "tipo": "atraccion" | "tour" | "resto",
+              "busqueda": "Nombre corto y preciso del lugar para buscarlo (sin la ciudad)"
+            }
+          ]
+        }
+      ]
+    }
+
+    Usa "tipo": "resto" para comidas, "tipo": "tour" para visitas guiadas o monumentos con entrada,
+    y "tipo": "atraccion" para paseos, miradores, plazas o lugares de acceso libre.
+  `;
+
+  const response = await ai.models.generateContent({
+    model: 'gemini-3.5-flash-lite',
+    contents: prompt,
+    config: {
+      responseMimeType: "application/json"
+    }
   });
+
+  let textoLimpio = response.text.trim();
+  if (textoLimpio.startsWith('```')) {
+    textoLimpio = textoLimpio.replace(/^```(json)?\n?/, '').replace(/\n?```$/, '');
+  }
+
+  const datos = JSON.parse(textoLimpio);
+  if (!datos.dias || !Array.isArray(datos.dias) || datos.dias.length === 0) {
+    throw new Error("La IA no devolvió un itinerario válido.");
+  }
+  return datos.dias;
+}
+
+// Devuelve una lista de ciudades famosas para autocompletar el buscador.
+// Es solo una sugerencia visual: el usuario puede escribir cualquier ciudad.
+app.get('/api/sugerencias-ciudades', (req, res) => {
+  res.json(CIUDADES_SUGERIDAS);
+});
+
+app.get('/api/itinerario/:destino', async (req, res) => {
+  const { destino } = req.params;
+  const destinoNormalizado = normalizarCiudad(destino);
+
+  if (!destinoNormalizado) {
+    return res.status(400).json({ error: "Indica el nombre de una ciudad." });
+  }
+
+  const destinoFormateado = capitalizar(destino);
+
+  try {
+    let diasPlantilla;
+
+    if (ITINERARIOS_BASE[destinoNormalizado]) {
+      // Ciudad curada a mano: respuesta instantánea, sin coste de IA.
+      diasPlantilla = ITINERARIOS_BASE[destinoNormalizado];
+    } else {
+      // Cualquier otra ciudad del mundo: se genera dinámicamente con IA.
+      diasPlantilla = await generarItinerarioIA(destinoFormateado);
+    }
+
+    const itinerarioGenerado = formatearItinerario(destinoFormateado, diasPlantilla);
+
+    res.json({
+      destino: destinoFormateado,
+      duracion_dias: itinerarioGenerado.length,
+      itinerario: itinerarioGenerado
+    });
+  } catch (error) {
+    console.error("Error generando itinerario:", error.message || error);
+    res.status(500).json({ error: "No se pudo generar el itinerario para esa ciudad. Inténtalo de nuevo." });
+  }
 });
 
 // Endpoint de personalización con IA
@@ -409,6 +508,9 @@ app.post('/api/personalizar', async (req, res) => {
 
   if (!peticion) {
     return res.status(400).json({ error: "Por favor, indica qué cambios deseas realizar." });
+  }
+  if (!destino) {
+    return res.status(400).json({ error: "Falta el destino." });
   }
 
   const bookingLink = `https://www.booking.com/searchresults.es.html?ss=${encodeURIComponent(destino)}&aid=${AFFILIATE_CONFIG.booking_aid}`;
@@ -430,7 +532,8 @@ app.post('/api/personalizar', async (req, res) => {
               "hora": "09:00",
               "nombre": "Nombre de la atracción o lugar",
               "descripcion": "Descripción concisa y útil",
-              "tipo": "tour"
+              "tipo": "tour",
+              "busqueda": "Nombre corto y preciso del lugar para buscarlo (sin la ciudad)"
             }
           ]
         }
@@ -458,18 +561,17 @@ app.post('/api/personalizar', async (req, res) => {
       dia: index + 1,
       titulo: dia.titulo,
       actividades: dia.actividades.map(act => {
-        const queryBusqueda = encodeURIComponent(act.nombre + ' ' + destino);
-        
+        const linkAfiliado = (act.tipo === 'tour' || act.tipo === 'atraccion')
+          ? `https://www.civitatis.com/es/buscar/?q=${encodeURIComponent((act.busqueda || act.nombre) + ' ' + destino)}&a=${AFFILIATE_CONFIG.civitatis_id}`
+          : null;
+
         return {
           hora: act.hora || "10:00",
           nombre: act.nombre,
           descripcion: act.descripcion,
           direccion: `${destino}, Centro`,
           valoracion: (4.6 + (Math.random() * 0.3)).toFixed(1),
-          // FORMATO CORRECTO CON /buscar/
-link_afiliado: (act.tipo === 'tour' || act.tipo === 'atraccion')
-  ? `https://www.civitatis.com/es/buscar/?q=${encodeURIComponent((act.busqueda || act.nombre) + ' ' + destinoFormateado)}&a=${AFFILIATE_CONFIG.civitatis_id}`
-  : null,
+          link_afiliado: linkAfiliado,
           texto_boton: act.tipo === 'tour' ? '🎟️ Ver visitas guiadas' : '🎟️ Reservar entradas'
         };
       }),
