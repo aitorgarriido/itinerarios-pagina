@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" class="dark">
+<html lang="es">
 <head>
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8779323563449877"
      crossorigin="anonymous"></script>
@@ -7,289 +7,871 @@
   <meta name="google-adsense-account" content="ca-pub-8779323563449877">
   <meta name="google-site-verification" content="Vii3WeiNwCTwLypr6cLhZhTmONQ_7LN3WWs970TQt0c" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Itinerarios Inteligentes de Viaje</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            brand: {
-              dark: '#0f172a',
-              card: '#1e293b',
-              accent: '#38bdf8'
-            }
-          }
-        }
-      }
-    }
-  </script>
-</head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans">
+  <title>Itinerario — Rutas de viaje trazadas al detalle</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0c1120;
+    --bg-elevated: #121933;
+    --bg-ticket: #141b38;
+    --line: #2a3358;
+    --line-soft: #1c2444;
+    --brass: #c9a55c;
+    --brass-soft: rgba(201, 165, 92, 0.14);
+    --teal: #57a693;
+    --teal-soft: rgba(87, 166, 147, 0.14);
+    --cream: #f3efe3;
+    --slate: #a4abc4;
+    --slate-dim: #6d7492;
+    --error: #c76a5a;
+    --error-soft: rgba(199, 106, 90, 0.12);
+    --radius: 18px;
+    --shadow: 0 20px 60px -20px rgba(0,0,0,0.6);
+    --font-display: 'Fraunces', serif;
+    --font-body: 'Inter', -apple-system, sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+  }
 
-  <!-- Header -->
-  <header class="border-b border-slate-800 bg-slate-900/50 backdrop-blur sticky top-0 z-50">
-    <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-      <div class="flex items-center space-x-2">
-        <span class="text-2xl">✈️</span>
-        <span class="text-xl font-bold bg-gradient-to-r from-sky-400 to-blue-500 bg-clip-text text-transparent">Itinerarios Inteligentes</span>
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+  }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--cream);
+    font-family: var(--font-body);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+
+  /* textura sutil de grano para evitar el plano "flat" del dark UI genérico */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.035;
+    z-index: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  a { color: inherit; }
+  button { font-family: inherit; cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--brass); outline-offset: 3px; border-radius: 4px; }
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--brass);
+    margin: 0 0 0.6rem;
+  }
+
+  /* ---------- Header ---------- */
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    border-bottom: 1px solid var(--line-soft);
+    background: rgba(12, 17, 32, 0.82);
+    backdrop-filter: blur(10px);
+  }
+  .header-inner {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 1.1rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .brand { display: flex; align-items: center; gap: 0.6rem; font-family: var(--font-display); font-size: 1.25rem; font-weight: 600; letter-spacing: 0.01em; }
+  .brand .brand-mark { color: var(--brass); display: flex; }
+  .brand .brand-accent { color: var(--brass); }
+
+  .btn-ghost {
+    background: transparent;
+    border: 1px solid var(--line);
+    color: var(--slate);
+    padding: 0.55rem 1rem;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .btn-ghost:hover { border-color: var(--brass); color: var(--cream); }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    position: relative;
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 4.5rem 1.5rem 3.5rem;
+    z-index: 1;
+  }
+  .hero-inner { max-width: 640px; }
+  .hero h1 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(2.2rem, 5vw, 3.4rem);
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    margin: 0 0 1.1rem;
+  }
+  .hero h1 em { font-style: italic; color: var(--brass); font-weight: 500; }
+  .hero-sub {
+    color: var(--slate);
+    font-size: 1.05rem;
+    line-height: 1.6;
+    max-width: 46ch;
+    margin: 0 0 2.2rem;
+  }
+
+  .hero-route-art { position: absolute; right: -40px; top: 30px; width: 380px; opacity: 0.55; z-index: -1; }
+  @media (max-width: 900px) { .hero-route-art { display: none; } }
+
+  /* Buscador estilo tarjeta de embarque */
+  .ticket-search {
+    display: flex;
+    align-items: stretch;
+    background: var(--bg-ticket);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 0.4rem;
+    gap: 0.4rem;
+    max-width: 560px;
+    box-shadow: var(--shadow);
+  }
+  .ticket-search-field {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0.5rem 1rem;
+    min-width: 0;
+  }
+  .ticket-search-field label {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--slate-dim);
+    margin-bottom: 0.15rem;
+  }
+  .ticket-search-field input {
+    background: transparent;
+    border: none;
+    color: var(--cream);
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 500;
+    padding: 0;
+    width: 100%;
+  }
+  .ticket-search-field input::placeholder { color: var(--slate-dim); font-weight: 400; }
+  .ticket-search-field input:focus { outline: none; }
+
+  .btn-primary {
+    background: var(--brass);
+    color: #241a06;
+    border: none;
+    border-radius: 10px;
+    padding: 0 1.4rem;
+    font-weight: 600;
+    font-size: 0.92rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    white-space: nowrap;
+    transition: transform 0.15s ease, background 0.15s ease;
+  }
+  .btn-primary:hover { background: #d9b874; transform: translateY(-1px); }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-primary svg { width: 16px; height: 16px; }
+
+  .hero-suggestions { display: flex; align-items: center; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.2rem; }
+  .hero-suggestions > span { font-size: 0.8rem; color: var(--slate-dim); margin-right: 0.2rem; }
+  .chip {
+    background: transparent;
+    border: 1px solid var(--line);
+    color: var(--slate);
+    padding: 0.35rem 0.8rem;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    transition: border-color 0.15s, color 0.15s;
+  }
+  .chip:hover { border-color: var(--brass); color: var(--brass); }
+
+  /* ---------- Results shell ---------- */
+  .results-wrap {
+    flex-grow: 1;
+    max-width: 1080px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 1.5rem 5rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .state-card {
+    border-radius: var(--radius);
+    padding: 1.2rem 1.4rem;
+    font-size: 0.92rem;
+    margin-bottom: 2rem;
+    border: 1px solid var(--line);
+  }
+  .state-error { background: var(--error-soft); border-color: rgba(199,106,90,0.4); color: #f0c3ba; }
+
+  /* ---------- Trip summary ---------- */
+  .trip-summary {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding-bottom: 1.6rem;
+    margin-bottom: 1.6rem;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .trip-summary h2 { font-family: var(--font-display); font-size: 2rem; font-weight: 500; margin: 0; }
+  .trip-meta { display: flex; gap: 1.6rem; font-family: var(--font-mono); font-size: 0.78rem; color: var(--slate); }
+  .trip-meta strong { color: var(--cream); font-size: 0.95rem; display: block; font-family: var(--font-body); }
+
+  /* ---------- Day tabs ---------- */
+  .day-tabs {
+    position: sticky;
+    top: 65px;
+    z-index: 30;
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    padding: 0.6rem 0 1.6rem;
+    margin-bottom: 0.4rem;
+    background: linear-gradient(var(--bg) 70%, transparent);
+  }
+  .day-tab {
+    flex: none;
+    background: var(--bg-elevated);
+    border: 1px solid var(--line);
+    color: var(--slate);
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: border-color 0.15s, color 0.15s, background 0.15s;
+  }
+  .day-tab:hover { color: var(--cream); border-color: var(--slate); }
+  .day-tab.active { background: var(--brass-soft); border-color: var(--brass); color: var(--brass); }
+
+  /* ---------- Ticket card (elemento distintivo) ---------- */
+  .itinerary-container { display: flex; flex-direction: column; gap: 2.2rem; }
+
+  .ticket-card {
+    display: flex;
+    background: var(--bg-ticket);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: visible;
+    position: relative;
+    scroll-margin-top: 130px;
+  }
+
+  .ticket-body { flex: 1; min-width: 0; padding: 1.8rem 2rem; }
+
+  .ticket-day-head {
+    display: flex;
+    align-items: baseline;
+    gap: 0.9rem;
+    margin-bottom: 1.4rem;
+  }
+  .ticket-day-num {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--brass);
+    border: 1px solid rgba(201,165,92,0.4);
+    border-radius: 999px;
+    padding: 0.2rem 0.7rem;
+  }
+  .ticket-day-title { font-family: var(--font-display); font-size: 1.35rem; font-weight: 500; margin: 0; }
+
+  /* Timeline */
+  .timeline { position: relative; padding-left: 3.6rem; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 1.55rem;
+    top: 0.4rem;
+    bottom: 0.4rem;
+    width: 1px;
+    background: var(--line);
+  }
+
+  .activity { position: relative; padding-bottom: 1.7rem; }
+  .activity:last-child { padding-bottom: 0; }
+  .activity-time {
+    position: absolute;
+    left: -3.6rem;
+    top: 0.15rem;
+    width: 3.1rem;
+    text-align: right;
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    color: var(--slate-dim);
+  }
+  .activity-dot {
+    position: absolute;
+    left: 1.55rem;
+    top: 0.3rem;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--bg-ticket);
+    border: 2px solid var(--brass);
+    transform: translateX(-50%);
+  }
+  .activity.is-resto .activity-dot { border-color: var(--teal); }
+
+  .activity-body { padding-left: 0.4rem; }
+  .activity-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.8rem; }
+  .activity-name {
+    font-weight: 600;
+    font-size: 0.98rem;
+    color: var(--cream);
+    margin: 0;
+  }
+  .activity-rating { font-family: var(--font-mono); font-size: 0.74rem; color: var(--brass); white-space: nowrap; padding-top: 0.15rem; }
+  .activity-desc { color: var(--slate); font-size: 0.87rem; line-height: 1.55; margin: 0.25rem 0 0; }
+  .activity-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--slate-dim);
+    margin-top: 0.5rem;
+  }
+  .activity.is-resto .activity-tag { color: var(--teal); }
+
+  .activity-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    margin-top: 0.6rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--brass);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.15s;
+  }
+  .activity-link:hover { border-color: var(--brass); }
+
+  /* Stub tipo tarjeta de embarque */
+  .ticket-stub {
+    flex: none;
+    width: 168px;
+    position: relative;
+    padding: 1.8rem 1.4rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-left: 1px dashed var(--line);
+  }
+  .ticket-notch {
+    position: absolute;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--bg);
+    left: -13px;
+  }
+  .ticket-notch.top { top: -13px; }
+  .ticket-notch.bottom { bottom: -13px; }
+
+  .stub-code { font-family: var(--font-mono); font-size: 1.6rem; font-weight: 500; color: var(--brass); letter-spacing: 0.02em; }
+  .stub-label { font-family: var(--font-mono); font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--slate-dim); margin-top: 0.2rem; }
+  .stub-count { font-size: 0.78rem; color: var(--slate); margin-top: 1.1rem; line-height: 1.6; }
+  .stub-count strong { color: var(--cream); font-family: var(--font-mono); }
+
+  @media (max-width: 680px) {
+    .ticket-card { flex-direction: column; }
+    .ticket-stub {
+      width: auto;
+      border-left: none;
+      border-top: 1px dashed var(--line);
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .ticket-notch { display: none; }
+    .stub-count { margin-top: 0; }
+  }
+
+  /* Hotel stub */
+  .hotel-strip {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 1.8rem;
+    padding-top: 1.4rem;
+    border-top: 1px dashed var(--line);
+  }
+  .hotel-strip h5 { margin: 0; font-size: 0.88rem; font-weight: 600; color: var(--cream); }
+  .hotel-strip p { margin: 0.15rem 0 0; font-size: 0.78rem; color: var(--slate-dim); }
+  .btn-secondary {
+    background: var(--bg-elevated);
+    border: 1px solid var(--line);
+    color: var(--cream);
+    padding: 0.6rem 1.1rem;
+    border-radius: 10px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: border-color 0.15s;
+  }
+  .btn-secondary:hover { border-color: var(--brass); }
+
+  [contenteditable="true"] { outline: none; border-radius: 4px; }
+  [contenteditable="true"]:focus { box-shadow: 0 0 0 2px var(--brass-soft); }
+
+  /* ---------- IA panel ---------- */
+  .ia-panel {
+    margin-top: 2.6rem;
+    background: var(--bg-elevated);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 1.6rem 1.8rem;
+  }
+  .ia-panel-head { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.3rem; }
+  .ia-panel-head svg { width: 18px; height: 18px; color: var(--brass); }
+  .ia-panel h3 { font-family: var(--font-display); font-weight: 500; font-size: 1.15rem; margin: 0; }
+  .ia-panel p { color: var(--slate); font-size: 0.85rem; margin: 0.2rem 0 1.1rem; }
+  .ia-form { display: flex; flex-wrap: wrap; gap: 0.7rem; }
+  .ia-form input {
+    flex: 1;
+    min-width: 220px;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    color: var(--cream);
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    font-size: 0.88rem;
+  }
+  .ia-form input:focus { border-color: var(--brass); outline: none; }
+  .ia-form button:disabled { opacity: 0.55; cursor: not-allowed; }
+
+  /* ---------- Loading skeletons ---------- */
+  .skeleton { border-radius: var(--radius); background: var(--bg-ticket); border: 1px solid var(--line); height: 220px; margin-bottom: 1.4rem; position: relative; overflow: hidden; }
+  .skeleton::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(100deg, transparent 30%, rgba(201,165,92,0.06) 50%, transparent 70%);
+    animation: shimmer 1.6s infinite;
+  }
+  @keyframes shimmer { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
+  .skeleton-line { color: var(--slate-dim); font-family: var(--font-mono); font-size: 0.78rem; text-align: center; padding-top: 1rem; }
+
+  .fade-up { animation: fadeUp 0.5s ease both; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  .hidden { display: none !important; }
+
+  /* ---------- Footer ---------- */
+  .site-footer {
+    border-top: 1px solid var(--line-soft);
+    padding: 1.6rem 1.5rem;
+    text-align: center;
+    color: var(--slate-dim);
+    font-size: 0.78rem;
+  }
+
+  /* ---------- Print ---------- */
+  @media print {
+    .site-header, .hero, .day-tabs, .ia-panel, .btn-print, .hero-suggestions { display: none !important; }
+    body { background: white; color: black; }
+    .ticket-card { break-inside: avoid; box-shadow: none; border: 1px solid #ccc; }
+  }
+</style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="brand">
+        <span class="brand-mark">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9.2"/><path d="M12 6.2 13.6 10.9 18.3 12 13.6 13.1 12 17.8 10.4 13.1 5.7 12 10.4 10.9Z"/></svg>
+        </span>
+        <span>Itinerario<span class="brand-accent">.</span></span>
       </div>
-      <button onclick="window.print()" id="btn-print" class="hidden bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2 rounded-lg text-sm font-medium transition border border-slate-700">
-        🖨️ Exportar / Imprimir
+      <button onclick="window.print()" id="btn-print" class="btn-ghost hidden">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v8H6z"/></svg>
+        Imprimir
       </button>
     </div>
   </header>
 
-  <!-- Hero & Selector -->
-  <main class="flex-grow max-w-6xl w-full mx-auto px-4 py-10">
-    <div class="text-center max-w-2xl mx-auto mb-10">
-      <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight mb-4">
-        Rutas optimizadas para tu próximo viaje
-      </h1>
-      <p class="text-slate-400 text-lg">
-        Escribe cualquier ciudad del mundo y obtén un itinerario organizado por cercanía geográfica.
-      </p>
+  <section class="hero">
+    <div class="hero-inner">
+      <p class="eyebrow">Itinerarios a medida · cualquier ciudad del mundo</p>
+      <h1>Tu próximo viaje,<br><em>trazado</em> como lo haría un guía local.</h1>
+      <p class="hero-sub">Escribe un destino y recibe una ruta día a día agrupada por cercanía geográfica, con entradas, restaurantes y alojamiento ya enlazados.</p>
 
-      <form id="travel-form" class="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
-        <input
-          type="text"
-          id="input-destino"
-          list="ciudades-sugeridas"
-          placeholder="Escribe una ciudad, ej: Tokio, Sevilla, Berlín..."
-          autocomplete="off"
-          class="w-full sm:w-80 px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
-        />
-        <datalist id="ciudades-sugeridas"></datalist>
-
-        <button type="submit" class="px-8 py-3 bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold rounded-xl transition shadow-lg shadow-sky-500/20">
-          Ver Itinerario
+      <form id="travel-form" class="ticket-search">
+        <div class="ticket-search-field">
+          <label for="input-destino">Destino</label>
+          <input type="text" id="input-destino" list="ciudades-sugeridas" placeholder="Tokio, Sevilla, Berlín…" autocomplete="off" />
+          <datalist id="ciudades-sugeridas"></datalist>
+        </div>
+        <button type="submit" class="btn-primary">
+          Trazar ruta
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
         </button>
       </form>
-    </div>
 
-    <!-- Panel de Personalización con IA (Oculto hasta cargar un itinerario) -->
-    <div id="panel-ia" class="hidden mb-10 bg-slate-900/80 border border-sky-500/30 rounded-2xl p-6 shadow-xl backdrop-blur">
-      <div class="flex items-center gap-2 mb-2">
-        <span class="text-xl">✨</span>
-        <h3 class="text-lg font-bold text-white">Personalizar esta ruta con IA</h3>
+      <div class="hero-suggestions" id="hero-chips">
+        <span>Popular:</span>
       </div>
-      <p class="text-slate-400 text-sm mb-4">
-        Adapta el plan a tus preferencias (ej: "Reducir a 2 días", "Añadir más museos de arte", "Viajar con niños", etc.).
-      </p>
-      
-      <form id="ia-form" class="flex flex-col sm:flex-row gap-3">
-        <input type="text" id="input-peticion-ia" placeholder="Ej: Cambiar a 3 días y priorizar gastronomía..." class="flex-grow px-4 py-3 rounded-xl bg-slate-950 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 text-sm">
-        <button type="submit" id="btn-ia" class="px-6 py-3 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-bold rounded-xl transition shadow-lg shadow-sky-500/20 text-sm whitespace-nowrap">
-          Reorganizar con IA
-        </button>
+    </div>
+
+    <svg class="hero-route-art" viewBox="0 0 400 300" fill="none">
+      <path d="M20 250 C 100 260, 140 120, 220 100 S 340 40, 380 30" stroke="#c9a55c" stroke-width="1" stroke-dasharray="2 6" opacity="0.6"/>
+      <circle cx="20" cy="250" r="4" fill="#c9a55c"/>
+      <circle cx="220" cy="100" r="4" fill="#c9a55c"/>
+      <circle cx="380" cy="30" r="4" fill="#c9a55c"/>
+      <circle cx="20" cy="250" r="10" stroke="#c9a55c" stroke-width="1" opacity="0.5"/>
+      <circle cx="380" cy="30" r="10" stroke="#c9a55c" stroke-width="1" opacity="0.5"/>
+    </svg>
+  </section>
+
+  <main class="results-wrap">
+    <div id="error-msg" class="state-card state-error hidden"></div>
+
+    <div id="loading" class="hidden">
+      <p class="skeleton-line" id="loading-text">Cargando itinerario…</p>
+      <div class="skeleton"></div>
+      <div class="skeleton"></div>
+    </div>
+
+    <div id="trip-summary" class="trip-summary hidden">
+      <div>
+        <p class="eyebrow" style="margin-bottom:0.3rem;">Itinerario</p>
+        <h2 id="summary-destino"></h2>
+      </div>
+      <div class="trip-meta" id="summary-meta"></div>
+    </div>
+
+    <nav id="day-tabs" class="day-tabs hidden"></nav>
+
+    <div id="itinerary-container" class="itinerary-container"></div>
+
+    <div id="panel-ia" class="ia-panel hidden">
+      <div class="ia-panel-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6.3 6.3l2.8 2.8M14.9 14.9l2.8 2.8M17.7 6.3l-2.8 2.8M9.1 14.9l-2.8 2.8"/></svg>
+        <h3>Personalizar esta ruta con IA</h3>
+      </div>
+      <p>Adapta el plan a tus preferencias — "reducir a 2 días", "más museos de arte", "viajar con niños"…</p>
+      <form id="ia-form" class="ia-form">
+        <input type="text" id="input-peticion-ia" placeholder="Cambiar a 3 días y priorizar gastronomía…" />
+        <button type="submit" id="btn-ia" class="btn-primary">Reorganizar</button>
       </form>
     </div>
-
-    <!-- Indicador de Carga -->
-    <div id="loading" class="hidden text-center py-12">
-      <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-sky-500 border-t-transparent"></div>
-      <p id="loading-text" class="mt-4 text-slate-400">Cargando itinerario optimizado...</p>
-    </div>
-
-    <!-- Mensaje de error -->
-    <div id="error-msg" class="hidden text-center py-8 text-red-400"></div>
-
-    <!-- Contenedor del Itinerario -->
-    <div id="itinerary-container" class="space-y-10"></div>
   </main>
 
-  <script>
-    // Variables globales para recordar el itinerario actual y el destino activo
-    let itinerarioActualData = null;
-    let destinoActualNombre = '';
+  <footer class="site-footer">Itinerario — rutas generadas y verificadas con IA. Comprueba siempre horarios de apertura antes de viajar.</footer>
 
-    // Función auxiliar para limpiar URLs mal formateadas
-    function limpiarUrl(url) {
-      if (!url) return null;
-      let limpia = url.replace(/[\[\]\(\)]/g, '').trim();
-      const match = limpia.match(/https?:\/\/[^\s]+/);
-      return match ? match[0] : limpia;
+<script>
+  let itinerarioActualData = null;
+  let destinoActualNombre = '';
+  let scrollSpyObserver = null;
+
+  const CIUDADES_POPULARES = ["París", "Tokio", "Roma", "Nueva York", "Lisboa", "Granada"];
+
+  function limpiarUrl(url) {
+    if (!url) return null;
+    let limpia = url.replace(/[\[\]\(\)]/g, '').trim();
+    const match = limpia.match(/https?:\/\/[^\s]+/);
+    return match ? match[0] : limpia;
+  }
+
+  function iconoTipo(esResto) {
+    if (esResto) {
+      return '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2v7a3 3 0 0 0 3 3v10M6 2v10M10 2v7M14 2s-2 2-2 6 2 6 2 6v8"/></svg>';
     }
+    return '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10a2 2 0 0 0 0 4v2a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-2a2 2 0 0 1 0-4V8a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2Z"/><path d="M13 5v14"/></svg>';
+  }
 
-    // Carga la lista de ciudades famosas como sugerencias del buscador.
-    // Es solo una ayuda visual: el campo acepta cualquier ciudad del mundo.
-    document.addEventListener('DOMContentLoaded', async () => {
-      const datalist = document.getElementById('ciudades-sugeridas');
-      try {
-        const res = await fetch('/api/sugerencias-ciudades');
-        const ciudades = await res.json();
-        datalist.innerHTML = ciudades.map(c => `<option value="${c}"></option>`).join('');
-      } catch (err) {
-        // Si falla, el buscador sigue funcionando sin sugerencias.
-      }
+  function codigoCiudad(nombre) {
+    const limpio = (nombre || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    const palabras = limpio.split(/\s+/).filter(Boolean);
+    if (palabras.length > 1) {
+      return (palabras[0][0] + palabras[1].slice(0, 2)).toUpperCase();
+    }
+    return limpio.slice(0, 3).toUpperCase();
+  }
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    const datalist = document.getElementById('ciudades-sugeridas');
+    const chips = document.getElementById('hero-chips');
+
+    CIUDADES_POPULARES.forEach(c => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'chip';
+      btn.textContent = c;
+      btn.addEventListener('click', () => {
+        document.getElementById('input-destino').value = c;
+        document.getElementById('travel-form').requestSubmit();
+      });
+      chips.appendChild(btn);
     });
 
-    document.getElementById('travel-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const destino = document.getElementById('input-destino').value.trim();
-      if (!destino) return;
+    try {
+      const res = await fetch('/api/sugerencias-ciudades');
+      const ciudades = await res.json();
+      datalist.innerHTML = ciudades.map(c => `<option value="${c}"></option>`).join('');
+    } catch (err) {
+      // El buscador sigue funcionando sin sugerencias.
+    }
+  });
 
-      const loading = document.getElementById('loading');
-      const loadingText = document.getElementById('loading-text');
-      const container = document.getElementById('itinerary-container');
-      const errorMsg = document.getElementById('error-msg');
-      const printBtn = document.getElementById('btn-print');
-      const panelIA = document.getElementById('panel-ia');
+  document.getElementById('travel-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const destino = document.getElementById('input-destino').value.trim();
+    if (!destino) return;
 
-      loadingText.innerText = `✨ Diseñando tu itinerario por ${destino}...`;
-      loading.classList.remove('hidden');
-      errorMsg.classList.add('hidden');
-      panelIA.classList.add('hidden');
-      container.innerHTML = '';
+    const loading = document.getElementById('loading');
+    const loadingText = document.getElementById('loading-text');
+    const container = document.getElementById('itinerary-container');
+    const errorMsg = document.getElementById('error-msg');
+    const printBtn = document.getElementById('btn-print');
+    const panelIA = document.getElementById('panel-ia');
+    const summary = document.getElementById('trip-summary');
+    const dayTabs = document.getElementById('day-tabs');
 
-      try {
-        const res = await fetch(`/api/itinerario/${encodeURIComponent(destino)}`);
-        const data = await res.json();
+    loadingText.textContent = `Diseñando tu itinerario por ${destino}…`;
+    loading.classList.remove('hidden');
+    errorMsg.classList.add('hidden');
+    panelIA.classList.add('hidden');
+    summary.classList.add('hidden');
+    dayTabs.classList.add('hidden');
+    container.innerHTML = '';
 
-        if (!res.ok) {
-          throw new Error(data.error || 'No se pudo generar el itinerario.');
-        }
+    try {
+      const res = await fetch(`/api/itinerario/${encodeURIComponent(destino)}`);
+      const data = await res.json();
 
-        // Guardar referencia en variables globales
+      if (!res.ok) throw new Error(data.error || 'No se pudo generar el itinerario.');
+
+      itinerarioActualData = data.itinerario;
+      destinoActualNombre = data.destino;
+
+      loading.classList.add('hidden');
+      printBtn.classList.remove('hidden');
+      panelIA.classList.remove('hidden');
+      renderItinerario(data);
+    } catch (err) {
+      loading.classList.add('hidden');
+      errorMsg.textContent = err.message || 'Error al obtener la ruta. Inténtalo de nuevo.';
+      errorMsg.classList.remove('hidden');
+    }
+  });
+
+  document.getElementById('ia-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const peticionInput = document.getElementById('input-peticion-ia');
+    const peticion = peticionInput.value.trim();
+
+    if (!peticion) return alert("Escribe los cambios que deseas realizar en el itinerario.");
+    if (!itinerarioActualData || !destinoActualNombre) return alert("Busca un destino primero.");
+
+    const loading = document.getElementById('loading');
+    const loadingText = document.getElementById('loading-text');
+    const container = document.getElementById('itinerary-container');
+    const btnIA = document.getElementById('btn-ia');
+
+    btnIA.disabled = true;
+    peticionInput.disabled = true;
+    loadingText.textContent = 'La IA está reorganizando tu ruta…';
+    loading.classList.remove('hidden');
+    container.innerHTML = '';
+
+    try {
+      const res = await fetch('/api/personalizar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          destino: destinoActualNombre,
+          itinerarioActual: itinerarioActualData,
+          peticion: peticion
+        })
+      });
+
+      const data = await res.json();
+
+      if (data.itinerario) {
         itinerarioActualData = data.itinerario;
-        destinoActualNombre = data.destino;
-
-        loading.classList.add('hidden');
-        printBtn.classList.remove('hidden');
-        panelIA.classList.remove('hidden');
         renderItinerario(data);
-      } catch (err) {
-        loading.classList.add('hidden');
-        errorMsg.textContent = err.message || 'Error al obtener la ruta. Inténtalo de nuevo.';
-        errorMsg.classList.remove('hidden');
+        peticionInput.value = '';
+      } else {
+        alert("No se pudo personalizar el itinerario.");
       }
-    });
+    } catch (err) {
+      alert("Ocurrió un error al procesar tu solicitud con IA.");
+    } finally {
+      loading.classList.add('hidden');
+      btnIA.disabled = false;
+      peticionInput.disabled = false;
+    }
+  });
 
-    // Evento para procesar el envío de personalización con IA
-    document.getElementById('ia-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const peticionInput = document.getElementById('input-peticion-ia');
-      const peticion = peticionInput.value.trim();
+  function renderItinerario(data) {
+    const container = document.getElementById('itinerary-container');
+    const summary = document.getElementById('trip-summary');
+    const dayTabs = document.getElementById('day-tabs');
 
-      if (!peticion) return alert("Escribe los cambios que deseas realizar en el itinerario.");
-      if (!itinerarioActualData || !destinoActualNombre) return alert("Selecciona un destino primero.");
+    const totalActividades = data.itinerario.reduce((acc, d) => acc + d.actividades.length, 0);
+    const totalRestos = data.itinerario.reduce((acc, d) => acc + d.actividades.filter(esActividadResto).length, 0);
 
-      const loading = document.getElementById('loading');
-      const loadingText = document.getElementById('loading-text');
-      const container = document.getElementById('itinerary-container');
-      const btnIA = document.getElementById('btn-ia');
+    document.getElementById('summary-destino').textContent = data.destino;
+    document.getElementById('summary-meta').innerHTML = `
+      <div><strong>${data.duracion_dias}</strong>días</div>
+      <div><strong>${totalActividades}</strong>paradas</div>
+      <div><strong>${totalRestos}</strong>restaurantes</div>
+    `;
+    summary.classList.remove('hidden');
 
-      btnIA.disabled = true;
-      peticionInput.disabled = true;
-      loadingText.innerText = '✨ La Inteligencia Artificial está reorganizando tu ruta...';
-      loading.classList.remove('hidden');
-      container.innerHTML = '';
+    const code = codigoCiudad(data.destino);
 
-      try {
-        const res = await fetch('/api/personalizar', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            destino: destinoActualNombre,
-            itinerarioActual: itinerarioActualData,
-            peticion: peticion
-          })
-        });
+    dayTabs.innerHTML = data.itinerario.map(dia =>
+      `<button type="button" class="day-tab" data-target="dia-${dia.dia}">Día ${dia.dia}</button>`
+    ).join('');
+    dayTabs.classList.remove('hidden');
 
-        const data = await res.json();
-
-        if (data.itinerario) {
-          itinerarioActualData = data.itinerario;
-          renderItinerario(data);
-          peticionInput.value = '';
-        } else {
-          alert("No se pudo personalizar el itinerario.");
-        }
-      } catch (err) {
-        console.error("Error al conectar con la IA:", err);
-        alert("Ocurrió un error al procesar tu solicitud con IA.");
-      } finally {
-        loading.classList.add('hidden');
-        btnIA.disabled = false;
-        peticionInput.disabled = false;
-      }
-    });
-
-    function renderItinerario(data) {
-      const container = document.getElementById('itinerary-container');
-      
-      let html = `
-        <div class="border-b border-slate-800 pb-6 mb-8">
-          <h2 class="text-3xl font-bold text-white mb-2">Itinerario completo por ${data.destino}</h2>
-          <p class="text-sky-400 font-medium">${data.duracion_dias} días optimizados con rutas lógicas y recomendaciones de restaurantes.</p>
-        </div>
+    let html = '';
+    data.itinerario.forEach(dia => {
+      html += `
+        <article class="ticket-card fade-up" id="dia-${dia.dia}">
+          <div class="ticket-body">
+            <div class="ticket-day-head">
+              <span class="ticket-day-num">DÍA ${String(dia.dia).padStart(2, '0')}</span>
+              <h3 class="ticket-day-title">${dia.titulo}</h3>
+            </div>
+            <div class="timeline">
       `;
 
-      data.itinerario.forEach(dia => {
-        html += `
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-xl">
-            <div class="flex items-center justify-between border-b border-slate-800 pb-4 mb-6">
-              <span class="bg-sky-500/10 text-sky-400 border border-sky-500/20 px-3 py-1 rounded-full text-sm font-semibold">Día ${dia.dia}</span>
-              <h3 class="text-xl font-bold text-slate-100">${dia.titulo}</h3>
-            </div>
-
-            <div class="space-y-6">
-        `;
-
-        dia.actividades.forEach(act => {
-          const isResto = act.link_afiliado === null && (act.descripcion.toLowerCase().includes('cena') || act.descripcion.toLowerCase().includes('almuerzo') || act.descripcion.toLowerCase().includes('desayuno'));
-          const badgeColor = isResto ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-slate-800 text-slate-300 border-slate-700';
-          const linkLimpio = limpiarUrl(act.link_afiliado);
-
-          html += `
-            <div class="flex flex-col sm:flex-row gap-4 p-4 rounded-xl bg-slate-950/50 border border-slate-800/80 hover:border-slate-700 transition">
-              <div class="sm:w-24 flex-shrink-0">
-                <span class="inline-block px-2.5 py-1 rounded-md text-xs font-mono font-bold ${badgeColor} border">
-                  ${act.hora}
-                </span>
-              </div>
-              <div class="flex-grow space-y-1">
-                <div class="flex items-center justify-between">
-                  <h4 class="font-bold text-slate-200 text-base" contenteditable="true">${act.nombre}</h4>
-                  <span class="text-xs text-amber-400 font-medium">★ ${act.valoracion}</span>
-                </div>
-                <p class="text-sm text-slate-400 leading-relaxed" contenteditable="true">${act.descripcion}</p>
-                ${linkLimpio ? `
-                  <div class="pt-2">
-                    <a href="${linkLimpio}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center text-xs text-sky-400 hover:text-sky-300 font-semibold gap-1">
-                      ${act.texto_boton} &rarr;
-                    </a>
-                  </div>
-                ` : ''}
-              </div>
-            </div>
-          `;
-        });
-
-        if (dia.hotel_recomendado) {
-          const bookingLinkLimpio = limpiarUrl(dia.hotel_recomendado.booking_link);
-          html += `
-            <div class="mt-6 pt-4 border-t border-slate-800/60 flex flex-col sm:flex-row items-center justify-between gap-4 bg-sky-950/20 p-4 rounded-xl border border-sky-900/30">
-              <div>
-                <h5 class="text-sm font-bold text-slate-200">${dia.hotel_recomendado.nombre}</h5>
-                <p class="text-xs text-slate-400">${dia.hotel_recomendado.descripcion}</p>
-              </div>
-              <a href="${bookingLinkLimpio}" target="_blank" rel="noopener noreferrer" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs font-semibold rounded-lg transition whitespace-nowrap">
-                ${dia.hotel_recomendado.texto_boton}
-              </a>
-            </div>
-          `;
-        }
+      dia.actividades.forEach(act => {
+        const esResto = esActividadResto(act);
+        const linkLimpio = limpiarUrl(act.link_afiliado);
 
         html += `
+          <div class="activity ${esResto ? 'is-resto' : ''}">
+            <span class="activity-time">${act.hora}</span>
+            <span class="activity-dot"></span>
+            <div class="activity-body">
+              <div class="activity-head">
+                <p class="activity-name" contenteditable="true">${act.nombre}</p>
+                <span class="activity-rating">★ ${act.valoracion}</span>
+              </div>
+              <p class="activity-desc" contenteditable="true">${act.descripcion}</p>
+              <span class="activity-tag">${iconoTipo(esResto)} ${esResto ? 'Gastronomía' : 'Visita'}</span>
+              ${linkLimpio ? `
+                <a href="${linkLimpio}" target="_blank" rel="noopener noreferrer" class="activity-link">
+                  ${act.texto_boton} &rarr;
+                </a>` : ''}
             </div>
           </div>
         `;
       });
 
-      container.innerHTML = html;
-    }
-  </script>
+      html += `</div>`;
+
+      if (dia.hotel_recomendado) {
+        const bookingLinkLimpio = limpiarUrl(dia.hotel_recomendado.booking_link);
+        html += `
+          <div class="hotel-strip">
+            <div>
+              <h5>${dia.hotel_recomendado.nombre}</h5>
+              <p>${dia.hotel_recomendado.descripcion}</p>
+            </div>
+            <a href="${bookingLinkLimpio}" target="_blank" rel="noopener noreferrer" class="btn-secondary">
+              ${dia.hotel_recomendado.texto_boton}
+            </a>
+          </div>
+        `;
+      }
+
+      html += `
+          </div>
+          <div class="ticket-stub">
+            <span class="ticket-notch top"></span>
+            <span class="ticket-notch bottom"></span>
+            <div>
+              <div class="stub-code">${code}</div>
+              <div class="stub-label">Día ${dia.dia} de ${data.duracion_dias}</div>
+            </div>
+            <div class="stub-count">
+              <strong>${dia.actividades.length}</strong> paradas planeadas
+            </div>
+          </div>
+        </article>
+      `;
+    });
+
+    container.innerHTML = html;
+    setupDayTabs();
+  }
+
+  function esActividadResto(act) {
+    return act.link_afiliado === null && (
+      act.descripcion.toLowerCase().includes('cena') ||
+      act.descripcion.toLowerCase().includes('almuerzo') ||
+      act.descripcion.toLowerCase().includes('comida') ||
+      act.descripcion.toLowerCase().includes('desayuno')
+    );
+  }
+
+  function setupDayTabs() {
+    const tabs = Array.from(document.querySelectorAll('.day-tab'));
+    const cards = tabs.map(t => document.getElementById(t.dataset.target));
+
+    tabs.forEach((tab, i) => {
+      tab.addEventListener('click', () => {
+        cards[i].scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+
+    if (scrollSpyObserver) scrollSpyObserver.disconnect();
+    scrollSpyObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const idx = cards.indexOf(entry.target);
+          tabs.forEach(t => t.classList.remove('active'));
+          if (tabs[idx]) tabs[idx].classList.add('active');
+        }
+      });
+    }, { rootMargin: '-140px 0px -60% 0px', threshold: 0 });
+
+    cards.forEach(c => c && scrollSpyObserver.observe(c));
+    if (tabs[0]) tabs[0].classList.add('active');
+  }
+</script>
 </body>
 </html>
