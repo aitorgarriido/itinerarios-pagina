@@ -531,6 +531,10 @@
     color: var(--slate-dim);
     font-size: 0.78rem;
   }
+  .footer-links { display: inline-flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; justify-content: center; }
+  .footer-links a { color: var(--slate-dim); text-decoration: none; }
+  .footer-links a:hover { color: var(--brass); }
+  .footer-links span { color: var(--line); }
 
   /* ---------- Print ---------- */
   @media print {
@@ -655,7 +659,16 @@
     </div>
   </main>
 
-  <footer class="site-footer">Itinerario — rutas generadas y verificadas con IA. Comprueba siempre horarios de apertura antes de viajar.</footer>
+  <footer class="site-footer">
+    <p style="margin:0 0 0.6rem;">Itinerario — rutas generadas y verificadas con IA. Comprueba siempre horarios de apertura antes de viajar.</p>
+    <nav class="footer-links">
+      <a href="/privacidad.html">Política de privacidad</a>
+      <span aria-hidden="true">·</span>
+      <a href="/avisolegal.html">Aviso legal</a>
+      <span aria-hidden="true">·</span>
+      <a href="/cookies.html">Política de cookies</a>
+    </nav>
+  </footer>
 
 <script>
   let itinerarioActualData = null;
