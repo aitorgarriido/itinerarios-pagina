@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8779323563449877"
-     crossorigin="anonymous"></script>
   <meta charset="UTF-8">
   <meta name="google-adsense-account" content="ca-pub-8779323563449877">
   <meta name="google-site-verification" content="Vii3WeiNwCTwLypr6cLhZhTmONQ_7LN3WWs970TQt0c" />
@@ -213,6 +211,52 @@
     transition: border-color 0.15s, color 0.15s;
   }
   .chip:hover { border-color: var(--brass); color: var(--brass); }
+
+  /* ---------- Contenido editorial de la home (evita página "vacía") ---------- */
+  .intro-block {
+    max-width: 720px;
+    margin: 3rem auto 0;
+    padding: 0 1.5rem;
+    position: relative;
+    z-index: 1;
+  }
+  .intro-block h2 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 1.5rem;
+    margin: 0 0 0.8rem;
+  }
+  .intro-block p {
+    color: var(--slate);
+    font-size: 0.95rem;
+    line-height: 1.7;
+    margin: 0 0 1rem;
+  }
+  .intro-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.2rem;
+    margin-top: 1.6rem;
+  }
+  .intro-card {
+    background: var(--bg-elevated);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 1.2rem 1.3rem;
+  }
+  .intro-card h3 {
+    font-family: var(--font-body);
+    font-size: 0.92rem;
+    font-weight: 600;
+    margin: 0 0 0.4rem;
+    color: var(--cream);
+  }
+  .intro-card p {
+    font-size: 0.83rem;
+    color: var(--slate-dim);
+    margin: 0;
+    line-height: 1.55;
+  }
 
   /* ---------- Results shell ---------- */
   .results-wrap {
@@ -428,6 +472,15 @@
   [contenteditable="true"] { outline: none; border-radius: 4px; }
   [contenteditable="true"]:focus { box-shadow: 0 0 0 2px var(--brass-soft); }
 
+  /* ---------- Bloque de anuncio (solo se muestra con contenido real ya pintado) ---------- */
+  .ad-slot {
+    margin-top: 2.2rem;
+    min-height: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
   /* ---------- IA panel ---------- */
   .ia-panel {
     margin-top: 2.6rem;
@@ -481,7 +534,7 @@
 
   /* ---------- Print ---------- */
   @media print {
-    .site-header, .hero, .day-tabs, .ia-panel, .btn-print, .hero-suggestions { display: none !important; }
+    .site-header, .hero, .day-tabs, .ia-panel, .btn-print, .hero-suggestions, .ad-slot { display: none !important; }
     body { background: white; color: black; }
     .ticket-card { break-inside: avoid; box-shadow: none; border: 1px solid #ccc; }
   }
@@ -537,6 +590,27 @@
     </svg>
   </section>
 
+  <!-- Contenido editorial real, visible desde el primer momento (sin depender de la búsqueda) -->
+  <section class="intro-block">
+    <h2>Cómo funciona Itinerario</h2>
+    <p>Itinerario genera rutas de viaje día a día para cualquier ciudad del mundo, agrupando cada parada por cercanía geográfica para que no pierdas tiempo yendo de un extremo a otro de la ciudad. Cada plan incluye horarios orientativos, valoraciones, restaurantes recomendados y alojamiento cercano a la ruta de cada jornada.</p>
+    <p>Puedes ajustar cualquier itinerario generado escribiendo peticiones en lenguaje natural — por ejemplo, reducir el viaje a menos días, priorizar museos, gastronomía local o rutas más adecuadas para viajar con niños — y la ruta se reorganiza al momento.</p>
+    <div class="intro-grid">
+      <div class="intro-card">
+        <h3>Rutas por cercanía</h3>
+        <p>Las paradas de cada día se agrupan geográficamente para minimizar desplazamientos.</p>
+      </div>
+      <div class="intro-card">
+        <h3>Alojamiento sugerido</h3>
+        <p>Cada jornada incluye una recomendación de hotel cercano a la zona visitada ese día.</p>
+      </div>
+      <div class="intro-card">
+        <h3>Personalización con IA</h3>
+        <p>Reescribe el itinerario con instrucciones simples: más días, otro ritmo, otros intereses.</p>
+      </div>
+    </div>
+  </section>
+
   <main class="results-wrap">
     <div id="error-msg" class="state-card state-error hidden"></div>
 
@@ -558,6 +632,16 @@
 
     <div id="itinerary-container" class="itinerary-container"></div>
 
+    <!-- Bloque de anuncio: permanece vacío y oculto hasta que hay un itinerario real renderizado -->
+    <div id="ad-slot" class="ad-slot hidden">
+      <ins class="adsbygoogle"
+           style="display:block; width:100%;"
+           data-ad-client="ca-pub-8779323563449877"
+           data-ad-slot="TU_SLOT_ID"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
+    </div>
+
     <div id="panel-ia" class="ia-panel hidden">
       <div class="ia-panel-head">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6.3 6.3l2.8 2.8M14.9 14.9l2.8 2.8M17.7 6.3l-2.8 2.8M9.1 14.9l-2.8 2.8"/></svg>
@@ -577,6 +661,7 @@
   let itinerarioActualData = null;
   let destinoActualNombre = '';
   let scrollSpyObserver = null;
+  let adsScriptCargado = false;
 
   const CIUDADES_POPULARES = ["París", "Tokio", "Roma", "Nueva York", "Lisboa", "Granada"];
 
@@ -601,6 +686,27 @@
       return (palabras[0][0] + palabras[1].slice(0, 2)).toUpperCase();
     }
     return limpio.slice(0, 3).toUpperCase();
+  }
+
+  // Carga el script de AdSense y solicita el anuncio SOLO cuando ya hay
+  // un itinerario real pintado en la página (nunca en la home vacía ni en loading).
+  function activarAnuncios() {
+    const adSlot = document.getElementById('ad-slot');
+    adSlot.classList.remove('hidden');
+
+    if (!adsScriptCargado) {
+      const script = document.createElement('script');
+      script.async = true;
+      script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8779323563449877';
+      script.crossOrigin = 'anonymous';
+      script.onload = () => {
+        try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch (e) {}
+      };
+      document.head.appendChild(script);
+      adsScriptCargado = true;
+    } else {
+      try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch (e) {}
+    }
   }
 
   document.addEventListener('DOMContentLoaded', async () => {
@@ -641,6 +747,7 @@
     const panelIA = document.getElementById('panel-ia');
     const summary = document.getElementById('trip-summary');
     const dayTabs = document.getElementById('day-tabs');
+    const adSlot = document.getElementById('ad-slot');
 
     loadingText.textContent = `Diseñando tu itinerario por ${destino}…`;
     loading.classList.remove('hidden');
@@ -648,6 +755,7 @@
     panelIA.classList.add('hidden');
     summary.classList.add('hidden');
     dayTabs.classList.add('hidden');
+    adSlot.classList.add('hidden');
     container.innerHTML = '';
 
     try {
@@ -682,11 +790,13 @@
     const loadingText = document.getElementById('loading-text');
     const container = document.getElementById('itinerary-container');
     const btnIA = document.getElementById('btn-ia');
+    const adSlot = document.getElementById('ad-slot');
 
     btnIA.disabled = true;
     peticionInput.disabled = true;
     loadingText.textContent = 'La IA está reorganizando tu ruta…';
     loading.classList.remove('hidden');
+    adSlot.classList.add('hidden');
     container.innerHTML = '';
 
     try {
@@ -810,6 +920,7 @@
 
     container.innerHTML = html;
     setupDayTabs();
+    activarAnuncios(); // el itinerario ya tiene contenido real pintado: ahora sí se sirve el anuncio
   }
 
   function esActividadResto(act) {
